@@ -13,22 +13,26 @@ import org.springframework.stereotype.Service;
 public class AdminServiceImpl extends ServiceImpl<AdminMapper,AdminEntity> implements AdminService{
     @Override
     public Integer login(String loginName, String password) {
+        // Non-empty check
         if(Strings.isNullOrEmpty(loginName) || Strings.isNullOrEmpty(password)){
             return -1;
         }
+        // Query the database for the user with the specified login name and password to see if it exists.
         QueryWrapper<AdminEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .lambda()
                 .eq(AdminEntity::getLoginName,loginName);
         AdminEntity adminEntity = this.getOne(queryWrapper);
+        // If the username does not exist, return -1
         if(adminEntity == null)
             return -1;
-
+        // If the username exists, compare the password to see if it matches.
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if(passwordEncoder.matches(password,adminEntity.getPassword())){
+            // If the password matches, return the user id.
             return adminEntity.getId();
         }
-
+        // If the password does not match, return -1
         return -1;
     }
 }

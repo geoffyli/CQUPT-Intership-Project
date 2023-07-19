@@ -19,13 +19,14 @@ public class AuthFilter implements Filter{
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest)servletRequest;
         HttpServletResponse resp = (HttpServletResponse)servletResponse;
+        // Get the path of the request
         String path = ((HttpServletRequest) servletRequest).getServletPath();
-        //登录不校验token
+        // If the path is /login, skip the filter and continue the request.
         if(path.equals("/login")){
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        //tag接口不校验token
+        // If the path is /device/tags, skip the filter and continue the request.
         if(path.contains("/device/tags")){
             filterChain.doFilter(servletRequest, servletResponse);
             return;
@@ -35,13 +36,13 @@ public class AuthFilter implements Filter{
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-
+        // Check if the request header contains the Authorization field
         String authToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
         if(Strings.isNullOrEmpty(authToken)){
             ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
             return;
         }
-
+        // Check if the token is valid
         try {
             JwtUtil.parseJWT(authToken);
         } catch (Exception e) {

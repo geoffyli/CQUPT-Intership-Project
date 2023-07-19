@@ -5,10 +5,10 @@ import com.yikekong.entity.AdminEntity;
 
 public interface AdminService extends IService<AdminEntity>{
     /**
-     * 登录
-     * @param loginName
-     * @param password
-     * @return
+     * Admin login
+     * @param loginName the login name
+     * @param password the password
+     * @return the admin id
      */
     Integer login(String loginName,String password);
 }
