@@ -29,23 +29,30 @@ public class QuotaController{
     private EmqClient emqClient;
 
     /**
-     * 创建指标
-     * @param vo
-     * @return
+     * This method is used to create a new quota.
+     * @param vo the quota to be created, which is received from the request body
+     * @return true if the quota is created successfully, false otherwise
      */
     @PostMapping
     public boolean create(@RequestBody QuotaVO vo){
         try {
+            // Create a new QuotaEntity object
             QuotaEntity quotaEntity = new QuotaEntity();
+            // Copy properties from the QuotaVO (DTO) to the QuotaEntity (entity) using BeanUtils
             BeanUtils.copyProperties(vo,quotaEntity);
-            //订阅主题
+            // Subscribe to a topic based on the 'subject' field in the QuotaVO
+            // The topic will be "$queue/{subject}" for the MQTT broker
             try {
                 emqClient.subscribe("$queue/"+vo.getSubject());
             } catch (MqttException e) {
                 e.printStackTrace();
             }
+            // Save the QuotaEntity using the QuotaService object
+            // The QuotaService object is responsible for handling CRUD operations for quotas
             return quotaService.save(quotaEntity);
         }catch (DuplicateKeyException e){
+            // If a DuplicateKeyException occurs, it means there is already a quota with the same name
+            // Throw a BussinessException with a custom message to indicate that the name already exists
             throw new BussinessException("已存在该名称");
         }
     }

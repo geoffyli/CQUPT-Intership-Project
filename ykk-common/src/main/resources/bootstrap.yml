@@ -10,13 +10,15 @@ spring:
         health-check-interval: 10s
         enabled: true
         register: true
-        health-check-critical-timeout: 2m #2分钟之后健康检查未通过取消注册
-      host: 127.0.0.1 #${CONSUL-HOST:192.168.200.128}
+        health-check-critical-timeout: 2m # Sets the timeout period after which a service is considered critically unhealthy if the health check fails.
+      host: 127.0.0.1 # CONSUL-HOST: 127.0.0.1
       port: ${CONSUL-PORT:8500}
       config:
         enabled: true
         format: yaml
+        # The prefix for configuration keys in the Consul key/value store.
         prefix: config
+        # The default context to use when reading configuration data.
         data-key: data
         fail-fast: false
         watch:
