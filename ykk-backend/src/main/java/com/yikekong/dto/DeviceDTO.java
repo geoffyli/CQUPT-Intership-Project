@@ -5,23 +5,23 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 设备DTO
+    * This class is used to represent a device.
  */
 @Data
 public class DeviceDTO implements Serializable {
 
-    private String deviceId;//设备编号
+    private String deviceId; // The device ID
 
-    private Boolean alarm;// 是否告警
+    private Boolean alarm; // Whether the device is in alarm
 
-    private String alarmName;//告警名称
+    private String alarmName; // The name of the alarm
 
-    private Integer level;//告警级别
+    private Integer level; // The level of the alarm
 
-    private Boolean online;//是否在线
+    private Boolean online; // Whether the device is online
 
-    private String tag;// 标签
+    private String tag; // The tag of the device
 
-    private Boolean status;//开关状态
+    private Boolean status; // The status of the device
 
 }

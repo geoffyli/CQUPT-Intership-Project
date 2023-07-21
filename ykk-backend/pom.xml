@@ -48,7 +48,7 @@
             <version>3.3.1</version>
         </dependency>
 
-        <!--es相关依赖-->
+        <!--Import elastic search dependencies-->
         <dependency>
             <groupId>org.elasticsearch.client</groupId>
             <artifactId>elasticsearch-rest-high-level-client</artifactId>
@@ -64,7 +64,6 @@
             <artifactId>elasticsearch-rest-client</artifactId>
             <version>7.7.1</version>
         </dependency>
-        <!--es相关依赖结束-->
 
         <dependency>
             <groupId>org.eclipse.paho</groupId>
