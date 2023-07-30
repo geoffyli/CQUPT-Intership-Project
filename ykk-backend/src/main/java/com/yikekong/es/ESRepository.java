@@ -34,26 +34,36 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is used to operate the ES. It is used to add, search, update and delete devices.
+ * It is also used to search devices by location and search devices by tags.
+ */
 @Component
 @Slf4j
 public class ESRepository {
 
 
     @Autowired
-    private RestHighLevelClient restHighLevelClient;
+    private RestHighLevelClient restHighLevelClient; // The rest high level client
 
 
     /**
-     * 添加设备
-     * @param deviceDTO
+     * Add a device to the ES with rest high level client.
+     * @param deviceDTO The device to be added
      */
     public  void addDevices(DeviceDTO deviceDTO){
+        // If the device is null, return
         if(deviceDTO==null ) return;
+        // If the device ID is null, return
         if(deviceDTO.getDeviceId()==null) return;
+
+        // Create a new index request
         IndexRequest request=new IndexRequest("devices");
         try {
+            // Serialize the device to json, then convert the json to map
             String json = JsonUtil.serialize(deviceDTO);
-            Map map = JsonUtil.getByJson(json, Map.class);
+            Map<?, ?> map = JsonUtil.getByJson(json, Map.class);
+            // Set the source and the id of the request
             request.source(map);
             request.id(deviceDTO.getDeviceId());
             restHighLevelClient.index(request, RequestOptions.DEFAULT);

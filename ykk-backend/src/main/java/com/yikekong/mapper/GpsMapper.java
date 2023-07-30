@@ -7,6 +7,6 @@ import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-@CacheNamespace(implementation= MybatisRedisCache.class,eviction=MybatisRedisCache.class)
+//@CacheNamespace(implementation= MybatisRedisCache.class,eviction=MybatisRedisCache.class)
 public interface GpsMapper extends BaseMapper<GPSEntity>{
 }
