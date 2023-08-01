@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class DeviceServiceImpl implements DeviceService{
+public class DeviceServiceImpl implements DeviceService {
 
 
     @Autowired
@@ -26,55 +26,58 @@ public class DeviceServiceImpl implements DeviceService{
 
     @Override
     public boolean setStatus(String deviceId, Boolean status) {
+        // Search for the device, determine the switch status, and do not process if it is closed
         DeviceDTO deviceDTO = findDevice(deviceId);
-        if( deviceDTO==null ) return false;
-        boolean b = esRepository.updateStatus(deviceId, status);
+        if (deviceDTO == null) return false;
+        boolean res = esRepository.updateStatus(deviceId, status);
         deviceDTO.setStatus(status);
-        refreshDevice(deviceDTO);
-        return b;
+//        refreshDevice(deviceDTO);
+        return res;
     }
 
     @Override
-    public boolean updateTags(String deviceId, String tags) {
+    public boolean updateTags(String deviceId, String tag) {
+        // Search for the device, determine the switch status, and do not process if it is closed
         DeviceDTO deviceDTO = findDevice(deviceId);
-        if( deviceDTO==null ) return false;
-        return esRepository.updateDeviceTag(deviceId,tags);
+        if (deviceDTO == null) return false;
+        // Update the device tag
+        return esRepository.updateDeviceTag(deviceId, tag);
     }
 
     @Override
-    public Pager<DeviceDTO> queryPage(Long page, Long pageSize, String deviceId, String tags, Integer state) {
-        return esRepository.searchDevice(page,pageSize,deviceId,tags,state);
+    public Pager<DeviceDTO> queryPage(Long page, Long pageSize, String deviceId, String tag, Integer state) {
+        return esRepository.searchDevice(page, pageSize, deviceId, tag, state);
     }
 
     @Override
     public boolean saveDeviceInfo(DeviceDTO deviceDTO) {
         //查询设备 ，判断开关状态 ，如果是关闭则不处理
-        DeviceDTO device= findDevice(deviceDTO.getDeviceId());
-        if( device!=null && !device.getStatus() ) return false;
+        DeviceDTO device = findDevice(deviceDTO.getDeviceId());
+        if (device != null && !device.getStatus()) return false;
 
         // 如果当前设备查不到，新增
-        if(device==null){
-            esRepository.addDevices( deviceDTO );
-        }else{
+        if (device == null) {
+            esRepository.addDevices(deviceDTO);
+        } else {
             //如果可以查询到，更新告警信息
             esRepository.updateDevicesAlarm(deviceDTO);
         }
-        refreshDevice(deviceDTO);
+//        refreshDevice(deviceDTO);
         return true;
     }
 
     @Override
     public void updateOnLine(String deviceId, Boolean online) {
 
-        if( deviceId.startsWith("webclient")  || deviceId.startsWith("monitor") ){
+        if (deviceId.startsWith("webclient") || deviceId.startsWith("monitor")) {
             return;
         }
 
         DeviceDTO deviceDTO = findDevice(deviceId);
-        if(deviceDTO==null) return;
-        esRepository.updateOnline(deviceId,online);
+        if (deviceDTO == null) return;
+        esRepository.updateOnline(deviceId, online);
         deviceDTO.setOnline(online);
-        refreshDevice(deviceDTO);
+//        refreshDevice(deviceDTO);
 
     }
 
@@ -91,10 +94,10 @@ public class DeviceServiceImpl implements DeviceService{
 
 
         //2.查询指标列表
-        List<DeviceQuotaVO> deviceQuotaVOList= Lists.newArrayList();
+        List<DeviceQuotaVO> deviceQuotaVOList = Lists.newArrayList();
         pager.getItems().forEach(deviceDTO -> {
-            DeviceQuotaVO deviceQuotaVO=new DeviceQuotaVO();
-            BeanUtils.copyProperties(deviceDTO, deviceQuotaVO );
+            DeviceQuotaVO deviceQuotaVO = new DeviceQuotaVO();
+            BeanUtils.copyProperties(deviceDTO, deviceQuotaVO);
             //查询指标
             List<QuotaInfo> quotaList = quotaService.getLastQuotaList(deviceDTO.getDeviceId());
             deviceQuotaVO.setQuotaList(quotaList);
@@ -102,7 +105,7 @@ public class DeviceServiceImpl implements DeviceService{
         });
 
         //3.封装返回结果
-        Pager<DeviceQuotaVO> pageResult=new Pager(pager.getCounts(),pageSize);
+        Pager<DeviceQuotaVO> pageResult = new Pager(pager.getCounts(), pageSize);
         pageResult.setItems(deviceQuotaVOList);
 
         return pageResult;
@@ -112,29 +115,25 @@ public class DeviceServiceImpl implements DeviceService{
     private RedisTemplate redisTemplate;
 
     /**
-     * 根据设备id查询设备
-     * @param deviceId
-     * @return
+     * Search device by device ID
+     *
+     * @param deviceId device ID
+     * @return device
      */
-    private DeviceDTO findDevice(String deviceId){
+    private DeviceDTO findDevice(String deviceId) {
 
-        DeviceDTO  deviceDTO = (DeviceDTO)redisTemplate.boundHashOps(SystemDefinition.DEVICE_KEY).get(deviceId);
-        if(deviceDTO==null){
-            deviceDTO = esRepository.searchDeviceById(deviceId);
-            refreshDevice(deviceDTO);
-        }
-        return deviceDTO;
+        return esRepository.searchDeviceById(deviceId);
     }
 
 
-    /**
-     * 刷新缓存
-     * @param deviceDTO
-     */
-    private void refreshDevice(DeviceDTO deviceDTO ){
-        if(deviceDTO==null) return;
-        redisTemplate.boundHashOps(SystemDefinition.DEVICE_KEY).put(deviceDTO.getDeviceId(),deviceDTO);
-    }
-
-
+//    /**
+//     * 刷新缓存
+//     * @param deviceDTO
+//     */
+//    private void refreshDevice(DeviceDTO deviceDTO ){
+//        if(deviceDTO==null) return;
+//        redisTemplate.boundHashOps(SystemDefinition.DEVICE_KEY).put(deviceDTO.getDeviceId(),deviceDTO);
+//    }
+//
+//
 }

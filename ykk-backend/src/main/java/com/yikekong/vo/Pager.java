@@ -6,28 +6,21 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * Pager
+ * @param <T> The type of the object
+ */
 @Data
 public class Pager<T> implements Serializable{
-    /**
-     * 总条数
-     */
+    // Total number of records
     private long counts;
-    /**
-     * 每页条数
-     */
+     // Number of records per page
     private long pageSize;
-    /**
-     * 总页数
-     */
+     // Total number of pages
     private long pages;
-    /**
-     * 当前页数
-     */
+     // Current page number
     private long page;
-
-    /**
-     * 当前页数据
-     */
+     // The data of the current page
     private List<T> items;
 
     public Pager(IPage page) {

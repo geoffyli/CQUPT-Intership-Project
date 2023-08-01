@@ -36,21 +36,22 @@ public class AuthFilter implements Filter{
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-        // Check if the request header contains the Authorization field
-        String authToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
-        if(Strings.isNullOrEmpty(authToken)){
-            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
-            return;
-        }
-        // Check if the token is valid
-        try {
-            JwtUtil.parseJWT(authToken);
-        } catch (Exception e) {
-            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
-            return;
-        }
-
         filterChain.doFilter(servletRequest, servletResponse);
+//        // Check if the request header contains the Authorization field
+//        String authToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
+//        if(Strings.isNullOrEmpty(authToken)){
+//            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
+//            return;
+//        }
+//        // Check if the token is valid
+//        try {
+//            JwtUtil.parseJWT(authToken);
+//        } catch (Exception e) {
+//            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
+//            return;
+//        }
+
+
     }
 
 

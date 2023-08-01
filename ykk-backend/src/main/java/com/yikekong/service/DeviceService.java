@@ -5,39 +5,43 @@ import com.yikekong.dto.DeviceDTO;
 import com.yikekong.vo.DeviceQuotaVO;
 import com.yikekong.vo.Pager;
 
-public interface DeviceService  {
+public interface DeviceService {
 
     /**
-     * 更改设备状态
-     * @param deviceId
-     * @param status
-     * @return
+     * Update the device status
+     *
+     * @param deviceId The device ID
+     * @param status   The status of the device
+     * @return true if the status is updated successfully, otherwise false
      */
-    boolean setStatus(String deviceId,Boolean status);
-
-
-    /**
-     * 更改设备标签
-     * @param deviceId
-     * @param tags
-     * @return
-     */
-    boolean updateTags(String deviceId,String tags);
+    boolean setStatus(String deviceId, Boolean status);
 
 
     /**
-     * 搜索设备
-     * @param page
-     * @param pageSize
-     * @param deviceId
-     * @param tags
-     * @param state
-     * @return
+     * Update the device tag
+     *
+     * @param deviceId The device ID
+     * @param tag      The tag of the device
+     * @return true if the tag is updated successfully, otherwise false
      */
-    Pager<DeviceDTO> queryPage(Long page,Long pageSize,String deviceId,String tags,Integer state );
+    boolean updateTags(String deviceId, String tag);
+
+
+    /**
+     * Search for devices by page
+     *
+     * @param page     The current page number
+     * @param pageSize The number of records per page
+     * @param deviceId The device ID
+     * @param tag      The tag of the device
+     * @param state    The status of the device
+     * @return The device information
+     */
+    Pager<DeviceDTO> queryPage(Long page, Long pageSize, String deviceId, String tag, Integer state);
 
     /**
      * 存储设备信息
+     *
      * @param deviceDTO
      * @return
      */
@@ -46,14 +50,16 @@ public interface DeviceService  {
 
     /**
      * 更新在线状态
+     *
      * @param deviceId
      * @param online
      */
-    void updateOnLine(String deviceId,Boolean online);
+    void updateOnLine(String deviceId, Boolean online);
 
 
     /**
      * 查询设备详情
+     *
      * @param page
      * @param pageSize
      * @param deviceId
@@ -61,6 +67,6 @@ public interface DeviceService  {
      * @param state
      * @return
      */
-    Pager<DeviceQuotaVO> queryDeviceQuota( Long page,Long pageSize,String deviceId,String tag,Integer state );
+    Pager<DeviceQuotaVO> queryDeviceQuota(Long page, Long pageSize, String deviceId, String tag, Integer state);
 
 }

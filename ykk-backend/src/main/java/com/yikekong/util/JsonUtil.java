@@ -45,7 +45,7 @@ public class JsonUtil{
     }
 
     /**
-     * 序列化
+     * Turn an object into a json string
      * @param object
      * @return
      * @throws JsonProcessingException
