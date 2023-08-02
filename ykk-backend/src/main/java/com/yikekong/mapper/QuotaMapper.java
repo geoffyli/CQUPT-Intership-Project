@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-@CacheNamespace(implementation= MybatisRedisCache.class,eviction=MybatisRedisCache.class)
+//@CacheNamespace(implementation= MybatisRedisCache.class,eviction=MybatisRedisCache.class)
 public interface QuotaMapper extends BaseMapper<QuotaEntity>{
 
     /**

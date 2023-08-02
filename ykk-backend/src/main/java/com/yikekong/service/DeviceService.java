@@ -40,7 +40,7 @@ public interface DeviceService {
     Pager<DeviceDTO> queryPage(Long page, Long pageSize, String deviceId, String tag, Integer state);
 
     /**
-     * 存储设备信息
+     * Save device information
      *
      * @param deviceDTO
      * @return
@@ -49,10 +49,10 @@ public interface DeviceService {
 
 
     /**
-     * 更新在线状态
+     * Update the device status
      *
-     * @param deviceId
-     * @param online
+     * @param deviceId The device ID
+     * @param online  The status of the device
      */
     void updateOnLine(String deviceId, Boolean online);
 

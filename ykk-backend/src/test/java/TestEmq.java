@@ -16,7 +16,9 @@ public class TestEmq {
 
     @Test
     public void testSend(){
+        // Connect to the MQTT server
         emqClient.connect();
+        // Publish a message to the MQTT server
         emqClient.publish("test_topic","test_content");
 
     }

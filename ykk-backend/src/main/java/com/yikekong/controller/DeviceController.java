@@ -69,21 +69,22 @@ public class DeviceController {
     private NoticeService noticeService;
 
     /**
-     * 接收设备断连信息
+     * Get disconnected device information
      *
-     * @param param
+     * @param param data from EMQX
      */
     @PostMapping("/clientAction")
     public void clientAction(@RequestBody Map<String, String> param) {
         System.out.println(param);
-        String deviceId = param.get("clientid");  //提取设备id
+        // Get client id.
+        String deviceId = param.get("clientid");
         if (param.get("action").equals("client_connected")) { //如果是联网
             deviceService.updateOnLine(deviceId, true);
-            noticeService.onlineTransfer(deviceId, true);//联网通知
+//            noticeService.onlineTransfer(deviceId, true);//联网通知
         }
         if (param.get("action").equals("client_disconnected")) { //如果是断网
             deviceService.updateOnLine(deviceId, false);
-            noticeService.onlineTransfer(deviceId, false);//断网通知
+//            noticeService.onlineTransfer(deviceId, false);//断网通知
         }
     }
 

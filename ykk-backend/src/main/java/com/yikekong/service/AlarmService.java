@@ -21,26 +21,19 @@ public interface AlarmService extends IService<AlarmEntity>{
      */
     IPage<AlarmEntity> queryPage(Long page,Long pageSize,String alarmName,Integer quotaId);
 
-    /**
-     * 获取某一指标下的所有告警设置
-     * @param quotaId 指标Id
-     * @return
-     */
-    List<AlarmEntity> getByQuotaId(Integer quotaId);
-
 
     /**
-     * 根据指标判断告警信息
-     * @param quotaDTO
-     * @return
+     * View the alarm information of a device
+     * @param quotaDTO QuotaDTO
+     * @return AlarmEntity object or null if no alarm is triggered
      */
     AlarmEntity verifyQuota(QuotaDTO quotaDTO);
 
 
     /**
-     * 告警信息封装
-     * @param deviceInfoDTO
-     * @return
+     * Encapsulate the alarm information of a device
+     * @param deviceInfoDTO DeviceInfoDTO
+     * @return DeviceInfoDTO object
      */
     DeviceInfoDTO verifyDeviceInfo(DeviceInfoDTO deviceInfoDTO);
 

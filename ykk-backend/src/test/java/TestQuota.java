@@ -29,28 +29,42 @@ public class TestQuota {
     private AlarmService alarmService;
 
     /**
-     * 测试报文解析(告警)
+     * Test the analysis method in QuotaServiceImpl.java
      */
     @Test
-    public void testAnalysis(){
-
-        Map map=new HashMap<>();
-        map.put("sn","123456");
-        map.put("temp",12);
+    public void testQuotaAnalysis() {
+        // Simulate a payload
+        Map map = new HashMap<>();
+        map.put("sn", "123456");
+        map.put("temp", 10);
         DeviceInfoDTO deviceInfoDTO = quotaService.analysis("temperature", map);
-        //告警信息封装
-        DeviceInfoDTO deviceInfoDTO1 = alarmService.verifyDeviceInfo(deviceInfoDTO);
         String json = null;
         try {
-            json = JsonUtil.serialize(deviceInfoDTO1);
+            json = JsonUtil.serialize(deviceInfoDTO);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        System.out.println(json);
+
+
+    }
+
+    @Test
+    public void testAlarm(){
+        // Simulate a payload
+        Map map = new HashMap<>();
+        map.put("sn", "123456");
+        map.put("temp", 10);
+        // Encapsulate the payload into a DeviceInfoDTO object
+        DeviceInfoDTO deviceInfoDTOUpdated = alarmService.verifyDeviceInfo(quotaService.analysis("temperature", map));
+        String json = null;
+        try {
+            json = JsonUtil.serialize(deviceInfoDTOUpdated);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         System.out.println(json);
     }
-
-
-
 
 
 }

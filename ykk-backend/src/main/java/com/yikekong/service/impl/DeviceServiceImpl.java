@@ -1,4 +1,5 @@
 package com.yikekong.service.impl;
+
 import com.google.common.collect.Lists;
 import com.yikekong.common.SystemDefinition;
 import com.yikekong.dto.DeviceDTO;
@@ -51,15 +52,20 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public boolean saveDeviceInfo(DeviceDTO deviceDTO) {
-        //查询设备 ，判断开关状态 ，如果是关闭则不处理
+        /*
+        1. Query the device
+        2. Determine whether the device is online
+        3. If the device is offline, do not process
+         */
+        // Query the device
         DeviceDTO device = findDevice(deviceDTO.getDeviceId());
         if (device != null && !device.getStatus()) return false;
 
-        // 如果当前设备查不到，新增
         if (device == null) {
+            // If the device doesn't exist, add it
             esRepository.addDevices(deviceDTO);
         } else {
-            //如果可以查询到，更新告警信息
+            // If the device exists, update it
             esRepository.updateDevicesAlarm(deviceDTO);
         }
 //        refreshDevice(deviceDTO);
@@ -68,11 +74,10 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void updateOnLine(String deviceId, Boolean online) {
-
-        if (deviceId.startsWith("webclient") || deviceId.startsWith("monitor")) {
+        // Determine whether the device is a web client or a monitor client
+        if (deviceId.startsWith("webclient") || deviceId.startsWith("monitor"))
             return;
-        }
-
+        // Search for the device, determine the switch status, and do not process if it is closed
         DeviceDTO deviceDTO = findDevice(deviceId);
         if (deviceDTO == null) return;
         esRepository.updateOnline(deviceId, online);

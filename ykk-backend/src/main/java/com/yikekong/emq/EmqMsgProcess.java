@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * 消息回调类
+ * This class is used to process the messages received from the MQTT server.
  */
 @Component
 @Slf4j
@@ -36,20 +36,6 @@ public class EmqMsgProcess implements MqttCallback {
     @Autowired
     private DeviceService deviceService;
 
-    @Override
-    public void connectionLost(Throwable throwable) {
-        //连接丢失
-        emqClient.connect();
-        quotaService.getAllSubject().forEach(s -> {
-            //共享订阅模式
-            try {
-                emqClient.subscribe("$queue/"+s);
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     @Autowired
     private GpsService gpsService;
 
@@ -61,35 +47,39 @@ public class EmqMsgProcess implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-        //接收到消息
-        String payload=new String(mqttMessage.getPayload());
-        System.out.println("接收到数据："+payload);
-        ObjectMapper mapper=new ObjectMapper();
+        // Message received
+        // Convert the message to a string
+        String payload = new String(mqttMessage.getPayload());
+        // Print the message
+        System.out.println("Message received: " + payload);
+
+        // Convert the message to a map
+        ObjectMapper mapper = new ObjectMapper();
         Map payloadMap = mapper.readValue(payload, Map.class);
 
-        //解析指标
+        // Parse the payload
         DeviceInfoDTO deviceInfoDTO = quotaService.analysis(topic, payloadMap);
-        if(deviceInfoDTO!=null){
-            //告警判断
-            deviceInfoDTO= alarmService.verifyDeviceInfo(deviceInfoDTO);
-            //保存设备信息
+        if (deviceInfoDTO != null) {
+            // Verify and set the device alarm information
+            deviceInfoDTO = alarmService.verifyDeviceInfo(deviceInfoDTO);
+            // Save the device information
             deviceService.saveDeviceInfo(deviceInfoDTO.getDevice());
-            //保存指标数据
-            quotaService.saveQuotaToInflux(deviceInfoDTO.getQuotaList());
-
-            //指标透传
-            noticeService.quotaTransfer(deviceInfoDTO.getQuotaList());
+//            // Save the device quota information
+//            quotaService.saveQuotaToInflux(deviceInfoDTO.getQuotaList());
+//
+//            //指标透传
+//            noticeService.quotaTransfer(deviceInfoDTO.getQuotaList());
 
         }
-
-
-        //解析gps
-        DeviceLocation deviceLocation = gpsService.analysis(topic, payloadMap);
-        if(deviceLocation!=null){
-            System.out.println("gps解析结果："+ JsonUtil.serialize(deviceLocation));
-            esRepository.saveLocation(deviceLocation);
-            noticeService.gpsTransfer( deviceLocation );
-        }
+//
+//
+//        //解析gps
+//        DeviceLocation deviceLocation = gpsService.analysis(topic, payloadMap);
+//        if (deviceLocation != null) {
+//            System.out.println("gps解析结果：" + JsonUtil.serialize(deviceLocation));
+//            esRepository.saveLocation(deviceLocation);
+//            noticeService.gpsTransfer(deviceLocation);
+//        }
 
 
     }
@@ -98,4 +88,22 @@ public class EmqMsgProcess implements MqttCallback {
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
 
     }
+
+    @Override
+    public void connectionLost(Throwable throwable) {
+        // Connection lost
+        System.out.println("--------- EMQX monitor connection lost! ----------");
+        // Try to reconnect
+        emqClient.connect();
+        quotaService.getAllSubject().forEach(s -> {
+            // Subscribe to the topic $queue/subject, $queue stands for the shared subscription mode
+            try {
+                emqClient.subscribe("$queue/" + s);
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 }
+
+

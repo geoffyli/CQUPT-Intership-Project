@@ -15,21 +15,26 @@ import java.util.UUID;
 public class EmqClient {
 
     @Autowired
-    private EmqConfig emqConfig;
+    private EmqConfig emqConfig; // MQTT server configuration
 
-    private MqttClient mqttClient;//客户端连接
+    private MqttClient mqttClient; // MQTT client, used to connect to the MQTT server
 
 
     @Autowired
-    private EmqMsgProcess emqMsgProcess;
+    private EmqMsgProcess emqMsgProcessor;
 
     /**
-     * 连接emq
+     * Connect to the MQTT server
      */
-    public void  connect(){
+    public void connect() {
         try {
-            mqttClient=new MqttClient(emqConfig.getMqttServerUrl(),"monitor."+ UUID.randomUUID());
-            mqttClient.setCallback(emqMsgProcess);
+            /*
+            The first parameter is the server address, which can be an IP address or a domain name.
+            The second parameter is the client ID, which is used to identify the client. (random)
+             */
+            mqttClient = new MqttClient(emqConfig.getMqttServerUrl(), "monitor." + UUID.randomUUID());
+            // Set the callback function of the client
+            mqttClient.setCallback(emqMsgProcessor);
             mqttClient.connect();
 
         } catch (MqttException e) {
@@ -39,14 +44,17 @@ public class EmqClient {
 
 
     /**
-     * 发送消息
-     * @param topic 主题
-     * @param msg 消息
+     * Publish a message to the MQTT server
+     *
+     * @param topic the topic of the message
+     * @param msg   the content of the message
      */
-    public void publish(String topic,String msg){
-        MqttMessage mqttMessage=new MqttMessage( msg.getBytes());
+    public void publish(String topic, String msg) {
+        // Create a message object
+        MqttMessage mqttMessage = new MqttMessage(msg.getBytes());
         try {
-            mqttClient.getTopic(topic).publish( mqttMessage );
+            // Publish the message
+            mqttClient.getTopic(topic).publish(mqttMessage);
         } catch (MqttException e) {
             e.printStackTrace();
             log.error("发送消息异常");
@@ -55,13 +63,12 @@ public class EmqClient {
 
 
     /**
-     * 主题订阅
-     * @param topicName
-     * @throws MqttException
+     * Subscribe to a topic
+     *
+     * @param topicName the topic to subscribe to
+     * @throws MqttException if there is an error subscribing to the topic
      */
     public void subscribe(String topicName) throws MqttException {
         mqttClient.subscribe(topicName);
     }
-
-
 }

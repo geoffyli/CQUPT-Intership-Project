@@ -1,4 +1,5 @@
 package com.yikekong.service.impl;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,106 +19,120 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> implements QuotaService{
+public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> implements QuotaService {
+    @Autowired
+    private InfluxRepository influxRepository;
 
     @Override
     public IPage<QuotaEntity> queryPage(Long page, Long pageSize, String name) {
-        Page<QuotaEntity> pageResult = new Page<>(page,pageSize);
+        Page<QuotaEntity> pageResult = new Page<>(page, pageSize);
         LambdaQueryWrapper<QuotaEntity> wrapper = new LambdaQueryWrapper<>();
-        if(!Strings.isNullOrEmpty(name)){
-            wrapper.like(QuotaEntity::getName,name);
+        if (!Strings.isNullOrEmpty(name)) {
+            wrapper.like(QuotaEntity::getName, name);
         }
 
-        return this.page(pageResult,wrapper);
+        return this.page(pageResult, wrapper);
     }
 
 
     @Override
     public List<String> getAllSubject() {
+        // Create a query wrapper
         QueryWrapper<QuotaEntity> wrapper = new QueryWrapper<>();
+        // Select the subject column
         wrapper.lambda().select(QuotaEntity::getSubject);
-
-        return this.list(wrapper).stream().map(q->q.getSubject()).collect(Collectors.toList());
+        // Return the list of subjects
+        return this.list(wrapper).stream().map(QuotaEntity::getSubject).collect(Collectors.toList());
     }
 
+    /**
+     * For one payload, we
+     * @param topic 主题
+     * @param payloadMap 报文
+     * @return
+     */
     @Override
     public DeviceInfoDTO analysis(String topic, Map<String, Object> payloadMap) {
+        /*
+        1. Get the quota configuration from mysql by topic.
+        2. Encapsulate device information.
+        3. Encapsulate quota list
+        4. Encapsulate device information and quota list
+         */
+        // 1. Get the quota configuration from mysql by topic.
+        List<QuotaEntity> quotaList = baseMapper.selectBySubject(topic);
+        if (quotaList.size() == 0) return null;
 
-        //1.获取指标配置
-        List<QuotaEntity> quotaList = baseMapper.selectBySubject(topic);//根据主题查询指标列表
-        if(quotaList.size()==0) return null;
-
-        //2.封装设备信息
-        String snKey=quotaList.get(0).getSnKey();
-        if( Strings.isNullOrEmpty(snKey)  )  return null;
-
-        String  deviceId = (String) payloadMap.get(snKey);//设备编号
-        if( Strings.isNullOrEmpty(deviceId)  )  return null;
-
-        DeviceDTO deviceDTO=new DeviceDTO();
+        // 2. Encapsulate device information. (Get the device id)
+        String snKey = quotaList.get(0).getSnKey(); // Get the filed name of the device id
+        if (Strings.isNullOrEmpty(snKey)) return null;
+        String deviceId = (String) payloadMap.get(snKey); // Get the device id
+        if (Strings.isNullOrEmpty(deviceId)) return null;
+        DeviceDTO deviceDTO = new DeviceDTO();
         deviceDTO.setDeviceId(deviceId);
 
-        //3.封装指标列表  :  循环我们根据主题名称查询得指标列表，到报文中提取，如果能够提到，进行封装
-        List<QuotaDTO> quotaDTOList=Lists.newArrayList();
-        for( QuotaEntity quota:quotaList ){
-            String quotaKey = quota.getValueKey();//指标key
+        // 3. Encapsulate quota list
+        List<QuotaDTO> quotaDTOList = Lists.newArrayList();
+        for (QuotaEntity quota : quotaList) {
+            String quotaKey = quota.getValueKey(); // the filed name in payload that is related to the quota
+            // If the payload contains the filed that satisfies the quota
+            if (payloadMap.containsKey(quotaKey)) {
+                // Create the quota, and copy the quota info from mysql
+                QuotaDTO quotaDTO = new QuotaDTO();
+                BeanUtils.copyProperties(quota, quotaDTO);
+                quotaDTO.setQuotaName(quota.getName());
 
-            if( payloadMap.containsKey(quotaKey) ){
-                QuotaDTO quotaDTO=new QuotaDTO();
-                //复制指标配置信息
-                BeanUtils.copyProperties( quota, quotaDTO);
-                quotaDTO.setQuotaName( quota.getName() );
-
-                //指标值封装
-                //指标分为两种  1.数值  2.非数值（string boolean）
-                //1.数值   value 存储数值  stringValue :存储数值字符串
-                //2.非数值  value 0   stringValue:内容
-
-                //如果是非数值
-                if( "String".equals(quotaDTO.getValueType()) || "Boolean".equals(quotaDTO.getValueType()) ){
-                    quotaDTO.setStringValue(  (String) payloadMap.get(quotaKey) );
+                /*
+                 Set the quotaDTO value and stringValue (from payload info)
+                 Two types: 1.Number 2.Non-number (string boolean)
+                    1.Number      value: content  stringValue: number str
+                    2.Non-number  value: 0        stringValue: content
+                 */
+                if ("String".equals(quotaDTO.getValueType()) || "Boolean".equals(quotaDTO.getValueType())) {
+                    // If the quota is not a number
+                    quotaDTO.setStringValue((String) payloadMap.get(quotaKey));
                     quotaDTO.setValue(0d);
-                }else{//如果是数值
-
-                    if(  payloadMap.get(quotaKey)  instanceof String ){
-                        quotaDTO.setValue( Double.valueOf(   (String) payloadMap.get(quotaKey)  ) );
-                        quotaDTO.setStringValue( (String) payloadMap.get(quotaKey)  );
-                    }else{
-                        quotaDTO.setValue( Double.valueOf( payloadMap.get(quotaKey) +"" )  );
-                        quotaDTO.setStringValue( quotaDTO.getValue()+"" );
+                } else {
+                    // If the quota is a number
+                    // There are 2 types of number: 1.String 2.Number
+                    if (payloadMap.get(quotaKey) instanceof String) {
+                        // If the number is a string
+                        quotaDTO.setValue(Double.valueOf((String) payloadMap.get(quotaKey)));
+                        quotaDTO.setStringValue((String) payloadMap.get(quotaKey));
+                    } else {
+                        // If the number is a number
+                        quotaDTO.setValue(Double.valueOf(payloadMap.get(quotaKey) + ""));
+                        quotaDTO.setStringValue(quotaDTO.getValue() + "");
                     }
-                    quotaDTO.setDeviceId( deviceId );
+                    quotaDTO.setDeviceId(deviceId);
 
                 }
                 quotaDTOList.add(quotaDTO);
             }
         }
 
-        //4.封装设备+指标列表返回
-        DeviceInfoDTO deviceInfoDTO=new DeviceInfoDTO();
+        // 4. Encapsulate device information and quota list
+        DeviceInfoDTO deviceInfoDTO = new DeviceInfoDTO();
         deviceInfoDTO.setDevice(deviceDTO);
-        deviceInfoDTO.setQuotaList(quotaDTOList );
+        deviceInfoDTO.setQuotaList(quotaDTOList);
 
         return deviceInfoDTO;
     }
 
-
-    @Autowired
-    private InfluxRepository influxRepository;
-
     @Override
     public void saveQuotaToInflux(List<QuotaDTO> quotaDTOList) {
 
-        for (QuotaDTO quotaDTO:quotaDTOList){
-            QuotaInfo quotaInfo=new QuotaInfo();
-            BeanUtils.copyProperties( quotaDTO,quotaInfo );
-            quotaInfo.setQuotaId(quotaDTO.getId()+"");
+        for (QuotaDTO quotaDTO : quotaDTOList) {
+            QuotaInfo quotaInfo = new QuotaInfo();
+            BeanUtils.copyProperties(quotaDTO, quotaInfo);
+            quotaInfo.setQuotaId(quotaDTO.getId() + "");
             influxRepository.add(quotaInfo);
         }
 
@@ -126,25 +141,24 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
     @Override
     public List<QuotaInfo> getLastQuotaList(String deviceId) {
 
-        String ql="select last(value),* from quota where deviceId='"+ deviceId+"' group by quotaId";
-        return influxRepository.query(ql,QuotaInfo.class);
+        String ql = "select last(value),* from quota where deviceId='" + deviceId + "' group by quotaId";
+        return influxRepository.query(ql, QuotaInfo.class);
     }
 
     @Override
     public IPage<QuotaEntity> queryNumberQuota(Long page, Long pageSize) {
 
-        Page<QuotaEntity> pageResult=new Page<>(page,pageSize);
+        Page<QuotaEntity> pageResult = new Page<>(page, pageSize);
 
-        LambdaQueryWrapper<QuotaEntity> wrapper=new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<QuotaEntity> wrapper = new LambdaQueryWrapper<>();
 
-        wrapper.eq( QuotaEntity::getValueType,"Long"  )
+        wrapper.eq(QuotaEntity::getValueType, "Long")
                 .or()
-                .eq( QuotaEntity::getValueType,"Integer" )
+                .eq(QuotaEntity::getValueType, "Integer")
                 .or()
-                .eq( QuotaEntity::getValueType,"Double");
+                .eq(QuotaEntity::getValueType, "Double");
 
-        return this.page( pageResult, wrapper);
+        return this.page(pageResult, wrapper);
     }
-
 
 }

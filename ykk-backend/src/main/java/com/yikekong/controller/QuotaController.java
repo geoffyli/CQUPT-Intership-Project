@@ -41,7 +41,6 @@ public class QuotaController{
             // Copy properties from the QuotaVO (DTO) to the QuotaEntity (entity) using BeanUtils
             BeanUtils.copyProperties(vo,quotaEntity);
             // Subscribe to a topic based on the 'subject' field in the QuotaVO
-            // The topic will be "$queue/{subject}" for the MQTT broker
             try {
                 emqClient.subscribe("$queue/"+vo.getSubject());
             } catch (MqttException e) {
@@ -52,8 +51,7 @@ public class QuotaController{
             return quotaService.save(quotaEntity);
         }catch (DuplicateKeyException e){
             // If a DuplicateKeyException occurs, it means there is already a quota with the same name
-            // Throw a BussinessException with a custom message to indicate that the name already exists
-            throw new BussinessException("已存在该名称");
+            throw new BussinessException("Quota name already exists");
         }
     }
 

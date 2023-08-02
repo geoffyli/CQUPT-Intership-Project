@@ -4,71 +4,53 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * This DTO is used to store the information of a quota.
+ */
 @Data
 public class QuotaDTO implements Serializable {
 
-    /**
-     * id
+    /*
+    Copied from QuotaEntity class
      */
-    private Integer id;
-    /**
-     * 指标名称
-     */
-    private String quotaName;
-    /**
-     * 单位
-     */
-    private String unit;
-    /**
-     * 报文主题
-     */
-    private String subject;
-    /**
-     * 指标值字段
-     */
-    private String valueKey;
-    /**
-     * 指标值数据类型
-     */
-    private String valueType;
-    /**
-     * 设备识别码字段(设备Id)
-     */
-    private String snKey;
-    /**
-     * web钩子地址
-     */
-    private String webhook;
-    /**
-     * 参考值
-     */
-    private String referenceValue;
 
-    /**
-     * 指标值（数值）
-     */
-    private Double value;
+    private Integer id; // primary key
 
-    /**
-     * 指标值（非数值）
-     */
-    private String stringValue;
+    private String quotaName; // quota name
 
-    /**
-     * 设备Id
-     */
-    private String deviceId;
+    private String unit; // unit
+
+    private String subject; // subject
+
+    private String valueKey; // value key
+
+    private String valueType; // value type
+
+    private String snKey; // device key
+
+    private String webhook; // webhook
+
+    private String referenceValue; // reference value
 
 
-    private String alarm;//是否告警  0不告警  1告警
+    private Double value; // quota value (number)
+    private String stringValue; // quota value (non-number)
 
-    private String alarmName;//告警名称
+    private String deviceId; // device id
 
-    private String level;//告警级别
+    /*
+    The following fields are alarm-related.
+     */
 
-    private String alarmWebHook;//告警钩子
+    private String alarm; // alarm status, "0" for no alarm, "1" for alarm
 
-    private Integer cycle;//沉默周期
+    private String alarmName; // The name of the alarm
+
+    private String level; // The level of the alarm
+
+    private String alarmWebHook; // The webhook of the alarm
+
+    private Integer cycle; // The cycle of the alarm
 
 
 }

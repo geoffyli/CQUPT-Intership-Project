@@ -1,4 +1,5 @@
 package com.yikekong.service.impl;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -21,63 +22,76 @@ import java.util.List;
 
 
 @Service
-public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> implements AlarmService{
+public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> implements AlarmService {
 
 
     @Override
-    public IPage<AlarmEntity> queryPage(Long page,Long pageSize,String alarmName, Integer quotaId) {
+    public IPage<AlarmEntity> queryPage(Long page, Long pageSize, String alarmName, Integer quotaId) {
         LambdaQueryWrapper<AlarmEntity> wrapper = new LambdaQueryWrapper<>();
-        if(!Strings.isNullOrEmpty(alarmName)){
-            wrapper.like(AlarmEntity::getName,alarmName);
+        if (!Strings.isNullOrEmpty(alarmName)) {
+            wrapper.like(AlarmEntity::getName, alarmName);
         }
-        if(quotaId != null){
-            wrapper.eq(AlarmEntity::getQuotaId,quotaId);
+        if (quotaId != null) {
+            wrapper.eq(AlarmEntity::getQuotaId, quotaId);
         }
         wrapper.orderByDesc(AlarmEntity::getId);
 
         //wrapper.orderByDesc(AlarmEntity::getCreateTime);
 
-        Page<AlarmEntity> pageResult = new Page<>(page,pageSize);
+        Page<AlarmEntity> pageResult = new Page<>(page, pageSize);
 
-        return this.page(pageResult,wrapper);
+        return this.page(pageResult, wrapper);
     }
 
-    @Override
-    public List<AlarmEntity> getByQuotaId(Integer quotaId) {
+    /*
+     **
+     * 获取某一指标下的所有告警设置
+     * @param quotaId 指标Id
+     * @return
+     *
+    List<AlarmEntity> getByQuotaId(Integer quotaId);
+     */
+
+    private List<AlarmEntity> getByQuotaId(Integer quotaId) {
         QueryWrapper<AlarmEntity> wrapper = new QueryWrapper<>();
         wrapper
-                .lambda()
-                .eq(AlarmEntity::getQuotaId,quotaId)
-                .orderByDesc(AlarmEntity::getLevel);
+                .lambda() // Use lambda expression
+                .eq(AlarmEntity::getQuotaId, quotaId) // Filter by quota id
+                .orderByDesc(AlarmEntity::getLevel); // Sort by level
 
-        return this.list(wrapper);
+        return this.list(wrapper); // Return the list of alarm rules
     }
 
     @Override
     public AlarmEntity verifyQuota(QuotaDTO quotaDTO) {
+        /*
+        1. Get alarm rules list by quota id
+        2. Traverse the alarm rules list
 
-        //1.根据指标id查询告警判断规则列表
+         */
+        // 1. Get alarm rules list by quota id
         List<AlarmEntity> alarmEntityList = getByQuotaId(quotaDTO.getId());
-        AlarmEntity alarm=null;
-        for( AlarmEntity alarmEntity:alarmEntityList ){
-            //判断：操作符和指标对比
-            if( "String".equals( quotaDTO.getValueType() ) || "Boolean".equals(quotaDTO.getValueType())  ){
-                if(  alarmEntity.getOperator().equals("=")  &&  quotaDTO.getStringValue().equals(alarmEntity.getThreshold()) ){
-                    alarm=alarmEntity;
-                    break;
+        AlarmEntity alarm = null;
+        // 2. Traverse the alarm rules list
+        for (AlarmEntity alarmEntity : alarmEntityList) {
+            // If the quota value type is string or boolean
+            if ("String".equals(quotaDTO.getValueType()) || "Boolean".equals(quotaDTO.getValueType())) {
+                if (alarmEntity.getOperator().equals("=")) {
+                    if (alarmEntity.getThreshold().toString().equals(quotaDTO.getStringValue())){
+                        alarm = alarmEntity;
+                        break;
+                    }
                 }
-            }else //数值
+            } else // If the quota value type is number
             {
-                if(  alarmEntity.getOperator().equals(">")  &&  quotaDTO.getValue()>alarmEntity.getThreshold() ){
-                    alarm=alarmEntity;
+                if (alarmEntity.getOperator().equals(">") && quotaDTO.getValue() > alarmEntity.getThreshold()) {
+                    alarm = alarmEntity;
                     break;
-                }
-                if(  alarmEntity.getOperator().equals("<")  &&  quotaDTO.getValue()<alarmEntity.getThreshold() ){
-                    alarm=alarmEntity;
+                } else if (alarmEntity.getOperator().equals("<") && quotaDTO.getValue() < alarmEntity.getThreshold()) {
+                    alarm = alarmEntity;
                     break;
-                }
-                if(  alarmEntity.getOperator().equals("=")  &&  quotaDTO.getValue().equals(alarmEntity.getThreshold()) ){
-                    alarm=alarmEntity;
+                } else if (alarmEntity.getOperator().equals("=") && quotaDTO.getValue().intValue() == alarmEntity.getThreshold()) {
+                    alarm = alarmEntity;
                     break;
                 }
             }
@@ -88,37 +102,36 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
 
     @Override
     public DeviceInfoDTO verifyDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
-
-        // 封装指标的告警  封装设备的告警
+        // Get the device
         DeviceDTO deviceDTO = deviceInfoDTO.getDevice();
-
-        deviceDTO.setLevel(0);//假设不告警
+        // Suppose the device is normal
+        deviceDTO.setLevel(0);
         deviceDTO.setAlarm(false);
-        deviceDTO.setAlarmName("正常");
+        deviceDTO.setAlarmName("Normal");
         deviceDTO.setStatus(true);
         deviceDTO.setOnline(true);
+        // Traverse the quota list
+        for (QuotaDTO quotaDTO : deviceInfoDTO.getQuotaList()) {
+            AlarmEntity alarmEntity = verifyQuota(quotaDTO); // Verify the quota
+            if (alarmEntity != null) {
+                // If the quota is in the alarm, set the quota alarm information
+                quotaDTO.setAlarm("1"); // In alarm
+                quotaDTO.setAlarmName(alarmEntity.getName()); // Set the alarm name
+                quotaDTO.setLevel(alarmEntity.getLevel() + ""); // Set the alarm level
+                quotaDTO.setAlarmWebHook(alarmEntity.getWebHook()); // Set the alarm webhook
+                quotaDTO.setCycle(alarmEntity.getCycle()); // Set the alarm cycle
 
-        for(QuotaDTO quotaDTO :deviceInfoDTO.getQuotaList() ){
+                if (alarmEntity.getLevel() > deviceDTO.getLevel()) {
 
-            AlarmEntity alarmEntity = verifyQuota(quotaDTO);//根据指标得到告警信息
-            if(alarmEntity!=null){  //如果指标存在告警
-
-                quotaDTO.setAlarm("1");
-                quotaDTO.setAlarmName( alarmEntity.getName() );//告警名称
-                quotaDTO.setLevel( alarmEntity.getLevel()+"" );//告警级别
-                quotaDTO.setAlarmWebHook(alarmEntity.getWebHook());//告警web钩子
-                quotaDTO.setCycle( alarmEntity.getCycle() );//沉默周期
-
-                if(alarmEntity.getLevel().intValue()> deviceDTO.getLevel().intValue() ){
-
-                    deviceDTO.setLevel( alarmEntity.getLevel() );
+                    deviceDTO.setLevel(alarmEntity.getLevel());
                     deviceDTO.setAlarm(true);
                     deviceDTO.setAlarmName(alarmEntity.getName());
                 }
 
-            }else{//如果指标不存储在告警
+            } else {
+                // If the quota is not in the alarm, set the quota alarm information
                 quotaDTO.setAlarm("0");
-                quotaDTO.setAlarmName("正常");
+                quotaDTO.setAlarmName("Normal");
                 quotaDTO.setLevel("0");
                 quotaDTO.setAlarmWebHook("");
                 quotaDTO.setCycle(0);
@@ -131,40 +144,41 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
     private InfluxRepository influxRepository;
 
     @Override
-    public Pager<QuotaAllInfo> queryAlarmLog(Long page, Long pageSize, String start, String end, String alarmName, String deviceId) {
+    public Pager<QuotaAllInfo> queryAlarmLog(Long page, Long pageSize, String start, String end, String
+            alarmName, String deviceId) {
 
 
         //1.where条件查询语句部分构建
 
-        StringBuilder whereQl=new StringBuilder("where alarm='1' ");
-        if(!Strings.isNullOrEmpty(start)){
-            whereQl.append("and time>='"+start +"' ");
+        StringBuilder whereQl = new StringBuilder("where alarm='1' ");
+        if (!Strings.isNullOrEmpty(start)) {
+            whereQl.append("and time>='" + start + "' ");
         }
-        if(!Strings.isNullOrEmpty(end)){
-            whereQl.append("and time<='"+end +"' ");
+        if (!Strings.isNullOrEmpty(end)) {
+            whereQl.append("and time<='" + end + "' ");
         }
-        if(!Strings.isNullOrEmpty(alarmName)){
-            whereQl.append("and alarmName=~/"+ alarmName+"/ ");
+        if (!Strings.isNullOrEmpty(alarmName)) {
+            whereQl.append("and alarmName=~/" + alarmName + "/ ");
         }
-        if(!Strings.isNullOrEmpty(deviceId)){
-            whereQl.append("and deviceId=~/^"+deviceId+"/ ");
+        if (!Strings.isNullOrEmpty(deviceId)) {
+            whereQl.append("and deviceId=~/^" + deviceId + "/ ");
         }
 
         //2.查询记录语句
-        StringBuilder listQl=new StringBuilder("select * from quota  ");
-        listQl.append( whereQl.toString() );
-        listQl.append( "order by desc limit "+ pageSize+" offset "+ (page-1)*pageSize   );
+        StringBuilder listQl = new StringBuilder("select * from quota  ");
+        listQl.append(whereQl.toString());
+        listQl.append("order by desc limit " + pageSize + " offset " + (page - 1) * pageSize);
 
 
         //3.查询记录数语句
-        StringBuilder countQl=new StringBuilder("select count(value) from quota ");
+        StringBuilder countQl = new StringBuilder("select count(value) from quota ");
         countQl.append(whereQl.toString());
 
 
         //4.执行查询记录语句
         List<QuotaAllInfo> quotaList = influxRepository.query(listQl.toString(), QuotaAllInfo.class);
         // 添加时间格式处理
-        for(QuotaAllInfo quotaAllInfo:quotaList){
+        for (QuotaAllInfo quotaAllInfo : quotaList) {
             //2020-09-19T09:58:34.926Z   DateTimeFormatter.ISO_OFFSET_DATE_TIME
             //转换为 2020-09-19 09:58:34  格式
             LocalDateTime dateTime = LocalDateTime.parse(quotaAllInfo.getTime(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -176,8 +190,8 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
         List<QuotaCount> quotaCount = influxRepository.query(countQl.toString(), QuotaCount.class);
 
         //6.封装返回结果
-        if(quotaCount==null || quotaCount.size()==0){
-            Pager<QuotaAllInfo> pager=new Pager<QuotaAllInfo>(0L,0L);
+        if (quotaCount == null || quotaCount.size() == 0) {
+            Pager<QuotaAllInfo> pager = new Pager<QuotaAllInfo>(0L, 0L);
             pager.setPage(0);
             pager.setItems(Lists.newArrayList());
             return pager;
@@ -186,7 +200,7 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
 
         Long totalCount = quotaCount.get(0).getCount();//总记录数
 
-        Pager<QuotaAllInfo> pager=new Pager<>(totalCount,pageSize);
+        Pager<QuotaAllInfo> pager = new Pager<>(totalCount, pageSize);
         pager.setPage(page);
         pager.setItems(quotaList);
 
