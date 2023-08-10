@@ -11,4 +11,17 @@ public interface AdminService extends IService<AdminEntity>{
      * @return the admin id
      */
     Integer login(String loginName,String password);
+
+    /**
+     * Add admin
+     * @param adminEntity the admin entity
+     * @return the admin id
+     */
+    Integer addAdmin(AdminEntity adminEntity);
+
+    /**
+     * Admin logout
+     * @param token the token
+     */
+    void logout(String token);
 }

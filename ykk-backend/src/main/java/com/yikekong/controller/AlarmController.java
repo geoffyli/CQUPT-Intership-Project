@@ -18,71 +18,71 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/alarm")
-public class AlarmController{
+public class AlarmController {
     @Autowired
     private AlarmService alarmService;
 
 
-
     @PostMapping
-    public boolean create(@RequestBody AlarmVO vo){
+    public boolean create(@RequestBody AlarmVO vo) {
         try {
             AlarmEntity entity = new AlarmEntity();
-            BeanUtils.copyProperties(vo,entity);
+            BeanUtils.copyProperties(vo, entity);
 
             return alarmService.save(entity);
-        }catch (DuplicateKeyException e){
+        } catch (DuplicateKeyException e) {
             throw new BussinessException("已存在该名称");
         }
 
     }
 
     @GetMapping
-    public Pager<AlarmEntity> queryPage(@RequestParam(value = "page",required = false,defaultValue = "1") Long page,
-                                        @RequestParam(value = "pageSize",required = false,defaultValue = "10") Long pageSize,
-                                        @RequestParam(value = "name",required = false) String name,
-                                        @RequestParam(value = "quotaId",required = false) Integer quotaId){
-        return new Pager<>(alarmService.queryPage(page,pageSize,name,quotaId));
+    public Pager<AlarmEntity> queryPage(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
+                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
+                                        @RequestParam(value = "name", required = false) String name,
+                                        @RequestParam(value = "quotaId", required = false) Integer quotaId) {
+        return new Pager<>(alarmService.queryPage(page, pageSize, name, quotaId));
     }
 
     @DeleteMapping("/{id}")
-    public Boolean delete(@PathVariable Integer id){
+    public Boolean delete(@PathVariable Integer id) {
         return alarmService.removeById(id);
     }
 
     @PutMapping
-    public Boolean update(@RequestBody AlarmVO vo){
+    public Boolean update(@RequestBody AlarmVO vo) {
         try {
-            if(vo.getId() == null) return false;
+            if (vo.getId() == null) return false;
             AlarmEntity entity = new AlarmEntity();
-            BeanUtils.copyProperties(vo,entity);
+            BeanUtils.copyProperties(vo, entity);
 
             return alarmService.updateById(entity);
-        }catch (DuplicateKeyException e){
+        } catch (DuplicateKeyException e) {
             throw new BussinessException("已存在该名称");
         }
     }
 
 
     /**
-     * 告警日志查询
-     * @param page
-     * @param pageSize
-     * @param start
-     * @param end
-     * @param alarmName
-     * @param deviceId
-     * @return
+     * Query alarm log from influxdb
+     *
+     * @param page      The page number
+     * @param pageSize  The page size
+     * @param start     The start time
+     * @param end       The end time
+     * @param alarmName The alarm name
+     * @param deviceId  The device id
+     * @return The alarm log in pager
      */
     @GetMapping("/log")
-    public Pager<QuotaAllInfo> alarmLog( @RequestParam(value = "page",required = false,defaultValue = "1")  Long page,
-                                         @RequestParam(value = "pageSize",required = false,defaultValue = "10")  Long pageSize ,
-                                         @RequestParam(value = "start")  String start ,
-                                         @RequestParam(value = "end")  String end ,
-                                         @RequestParam(value = "alarmName" ,required = false,defaultValue = "") String alarmName,
-                                         @RequestParam(value = "deviceId" ,required = false,defaultValue = "")   String deviceId  ){
+    public Pager<QuotaAllInfo> alarmLog(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
+                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
+                                        @RequestParam(value = "start") String start,
+                                        @RequestParam(value = "end") String end,
+                                        @RequestParam(value = "alarmName", required = false, defaultValue = "") String alarmName,
+                                        @RequestParam(value = "deviceId", required = false, defaultValue = "") String deviceId) {
 
-       return  alarmService.queryAlarmLog(page,pageSize,start,end,alarmName,deviceId);
+        return alarmService.queryAlarmLog(page, pageSize, start, end, alarmName, deviceId);
     }
 
 

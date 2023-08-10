@@ -12,8 +12,8 @@ import java.io.Serializable;
 public class AdminEntity implements Serializable{
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
-    private String loginName;
+    private String adminName;
     private String password;
-    private Boolean type;
-    private String board;
+//    private Boolean type;
+//    private String board;
 }

@@ -26,6 +26,14 @@ public class AuthFilter implements Filter{
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
+        if(path.equals("/signup")){
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
+        if(path.equals("/logout")){
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
         // If the path is /device/tags, skip the filter and continue the request.
         if(path.contains("/device/tags")){
             filterChain.doFilter(servletRequest, servletResponse);
@@ -36,23 +44,26 @@ public class AuthFilter implements Filter{
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
+        // Check if the request header contains the Authorization field
+        String authToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
+        if(Strings.isNullOrEmpty(authToken)){
+            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
+            return;
+        }
+        // Check if the token is valid
+        try {
+            JwtUtil.parseJWT(authToken);
+            // If the token is in the blacklist, return 401
+            if(JwtUtil.inBlacklist(authToken)){
+                ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
+                return;
+            }
+        } catch (Exception e) {
+            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
+        }
+
+        // If the token is valid, continue the request.
         filterChain.doFilter(servletRequest, servletResponse);
-//        // Check if the request header contains the Authorization field
-//        String authToken = ((HttpServletRequest) servletRequest).getHeader("Authorization");
-//        if(Strings.isNullOrEmpty(authToken)){
-//            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
-//            return;
-//        }
-//        // Check if the token is valid
-//        try {
-//            JwtUtil.parseJWT(authToken);
-//        } catch (Exception e) {
-//            ((HttpServletResponse) servletResponse).setStatus(HttpStatus.UNAUTHORIZED.value());
-//            return;
-//        }
-
-
     }
-
 
 }
