@@ -16,8 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/report")
 public class ReportController {
-
-
     @Autowired
     private ReportService reportService;
 
@@ -25,8 +23,8 @@ public class ReportController {
     private ESRepository esRepository;
 
     /**
-     * 设备状态分布
-     * @return
+     * Get the device statistics
+     * @return the number of normal devices, offline devices and alarm devices
      */
     @GetMapping("/statusCollect")
     public List<PieVO> getStatusCollect(){
@@ -35,8 +33,8 @@ public class ReportController {
 
 
     /**
-     * 实时监控数据
-     * @return
+     * Get real-time monitor data
+     * @return the number of all devices and alarm devices
      */
     @GetMapping("/monitor")
     public MonitorVO getMonitorData(){

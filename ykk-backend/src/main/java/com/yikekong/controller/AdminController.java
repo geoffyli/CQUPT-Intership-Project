@@ -13,7 +13,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@CrossOrigin
 public class AdminController {
     @Autowired
     private AdminService adminService;
@@ -38,7 +37,7 @@ public class AdminController {
         return setLoginResultVO(adminId);
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     public LogoutResultVO logout(ServletRequest servletRequest) {
         // Get authorization token from request header
         String token = ((HttpServletRequest) servletRequest).getHeader("Authorization");

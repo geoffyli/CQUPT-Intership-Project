@@ -9,80 +9,100 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
+/**
+ * This class is used to generate and verify JWT token.
+ */
 @Slf4j
 public class JwtUtil {
     //设置秘钥明文
-    public static final String JWT_KEY = "yykkey";
+    public static final String JWT_KEY = "123456";
+
+    public static final long JWT_EXPIRED_KEY = 30 * 60 * 1000L; // Half an hour
+
+    public static List<String> blacklist = new ArrayList<>();
 
     /**
-     * 生成jwt token
-     * @return
+     * Generate the secret key
+     *
+     * @return SecretKey
      */
     public static String createJWT(Integer adminId) {
 
-        //指定签名中使用的加密算法hs256
+        // Set the signature algorithm to use HS256
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-        //获取当前时间毫秒数
+        // Get the current time and add the timeout time
         long nowMillis = System.currentTimeMillis();
-        Date now = new Date(nowMillis);
-        //如果传入的超时时间参数为空, 使用默认1小时作为超时时间
-
-        ZoneId zoneId = ZoneId.systemDefault();
-        //使用当前时间+ 超时时间=具体在哪个时间点超时
-        long expMillis = LocalDateTime.now().plusDays(7).atZone(zoneId).toInstant().toEpochMilli();
-        //在这个时间超时
-        Date expDate = new Date(expMillis);
-        //将传入的id与userName转换为json
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("adminId",adminId);
-        String s = null;
+        long expTime = nowMillis + JWT_EXPIRED_KEY;
+        // Build the JWT
+        JwtBuilder builder = null;
         try {
-            s = JsonUtil.serialize(map);
+            builder = Jwts.builder()
+                    .setId(UUID.randomUUID() + "")
+                    .setSubject(JsonUtil.serialize(adminId))
+                    .setIssuer("system")
+                    .setIssuedAt(new Date(nowMillis))
+                    .signWith(signatureAlgorithm, encodeSecret())
+                    .setExpiration(new Date(expTime));
         } catch (JsonProcessingException e) {
-            log.error("json序列化失败",e);
+            log.error("json serialize failed", e);
         }
-
-        //指定加密的钥匙是什么
-        SecretKey secretKey = generalKey();
-
-        JwtBuilder builder = Jwts.builder()
-                .setSubject(s)//设置json:id和userName
-                .setIssuedAt(now)//签发时间
-                .signWith(signatureAlgorithm,secretKey)//使用hs256加密对称算法签名,第二个是秘钥
-                .setExpiration(expDate);//设置过期时间
+        assert builder != null;
         return builder.compact();
 
     }
 
-    /**
-     * 生成加密后的秘钥 secretKey
-     * @return
-     */
-    public static SecretKey generalKey() {
-        byte[] encodedKey = Base64.getDecoder().decode(JwtUtil.JWT_KEY);
-        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-        return key;
+    private static SecretKey encodeSecret() {
+        byte[] encode = Base64.getEncoder().encode(JwtUtil.JWT_KEY.getBytes());
+        return new SecretKeySpec(encode, 0, encode.length, "AES");
     }
 
+
+//    /**
+//     * 生成加密后的秘钥 secretKey
+//     *
+//     * @return
+//     */
+//    public static SecretKey generalKey() {
+//        byte[] encodedKey = Base64.getDecoder().decode(JwtUtil.JWT_KEY);
+//        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+//        return key;
+//    }
+
     /**
-     * 解析
-     *
-     * @param jwt
-     * @return
-     * @throws Exception
+     * Parse the JWT token
+     * @param token JWT token
+     * @return Claims
      */
-    public static Claims parseJWT(String jwt) throws Exception {
-        SecretKey secretKey = generalKey();
+    public static Claims parseJWT(String token){
         return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(jwt)
+                .setSigningKey(encodeSecret())
+                .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public static <T> T parseJWT(String token, Class<T> clazz){
+        Claims body = Jwts.parser()
+                .setSigningKey(encodeSecret())
+                .parseClaimsJws(token)
+                .getBody();
+        try {
+            return JsonUtil.getByJson(body.getSubject(),clazz);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void invalidateJWT(String token){
+        blacklist.add(token);
+    }
+
+    public static boolean inBlacklist(String token){
+        return blacklist.contains(token);
     }
 
 

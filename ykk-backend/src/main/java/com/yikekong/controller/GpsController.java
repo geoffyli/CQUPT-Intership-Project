@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/gps")
-public class GpsController{
+public class GpsController {
 
     @Autowired
     private GpsService gpsService;

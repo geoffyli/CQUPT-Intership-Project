@@ -8,7 +8,6 @@ import com.yikekong.vo.Pager;
 
 import com.yikekong.entity.AlarmEntity;
 import com.yikekong.service.AlarmService;
-import com.yikekong.service.QuotaService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

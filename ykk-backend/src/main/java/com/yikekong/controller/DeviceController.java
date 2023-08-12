@@ -90,14 +90,14 @@ public class DeviceController {
 
 
     /**
-     * 设备详情
+     * Query device quota data
      *
-     * @param page
-     * @param pageSize
-     * @param deviceId
-     * @param tag
-     * @param state
-     * @return
+     * @param page     The current page number
+     * @param pageSize The number of records per page
+     * @param deviceId The device ID
+     * @param tag      The tag of the device
+     * @param state    The status of the device
+     * @return The device quota data
      */
     @GetMapping("/deviceQuota")
     public Pager<DeviceQuotaVO> queryQuotaData(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
