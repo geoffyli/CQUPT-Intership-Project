@@ -1,10 +1,9 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yikekong.YkkApplication;
-import com.yikekong.dto.QuotaInfo;
-import com.yikekong.influx.InfluxRepository;
-import com.yikekong.service.QuotaService;
-import com.yikekong.service.ReportService;
-import com.yikekong.util.JsonUtil;
+import com.sensonet.YkkApplication;
+import com.sensonet.dto.QuotaInfo;
+import com.sensonet.influx.InfluxRepository;
+import com.sensonet.service.QuotaService;
+import com.sensonet.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
-import com.yikekong.YkkApplication;
-import com.yikekong.util.JwtUtil;
-import io.jsonwebtoken.Claims;
+import com.sensonet.YkkApplication;
+import com.sensonet.util.JwtUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

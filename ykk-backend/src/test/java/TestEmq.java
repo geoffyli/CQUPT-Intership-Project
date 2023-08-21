@@ -1,5 +1,5 @@
-import com.yikekong.YkkApplication;
-import com.yikekong.emq.EmqClient;
+import com.sensonet.YkkApplication;
+import com.sensonet.emq.EmqClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

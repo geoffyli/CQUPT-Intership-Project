@@ -1,9 +1,9 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yikekong.YkkApplication;
-import com.yikekong.dto.TrendPoint;
-import com.yikekong.dto.TrendPoint2;
-import com.yikekong.service.ReportService;
-import com.yikekong.util.JsonUtil;
+import com.sensonet.YkkApplication;
+import com.sensonet.dto.TrendPoint;
+import com.sensonet.dto.TrendPoint2;
+import com.sensonet.service.ReportService;
+import com.sensonet.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

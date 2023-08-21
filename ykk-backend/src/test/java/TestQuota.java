@@ -1,20 +1,15 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yikekong.YkkApplication;
-import com.yikekong.dto.DeviceInfoDTO;
-import com.yikekong.service.AlarmService;
-import com.yikekong.service.QuotaService;
-import com.yikekong.util.JsonUtil;
-import org.influxdb.InfluxDB;
-import org.joda.time.DateTime;
+import com.sensonet.YkkApplication;
+import com.sensonet.dto.DeviceInfoDTO;
+import com.sensonet.service.AlarmService;
+import com.sensonet.service.QuotaService;
+import com.sensonet.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 

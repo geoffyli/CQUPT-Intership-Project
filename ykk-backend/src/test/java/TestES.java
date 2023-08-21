@@ -1,10 +1,9 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.yikekong.YkkApplication;
-import com.yikekong.dto.DeviceDTO;
-import com.yikekong.dto.DeviceLocation;
-import com.yikekong.es.ESRepository;
-import com.yikekong.util.JsonUtil;
-import net.minidev.json.JSONUtil;
+import com.sensonet.YkkApplication;
+import com.sensonet.dto.DeviceDTO;
+import com.sensonet.dto.DeviceLocation;
+import com.sensonet.es.ESRepository;
+import com.sensonet.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
