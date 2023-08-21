@@ -5,7 +5,7 @@ import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
 /**
- * 包含time的指标对象
+ * This class is used to store the quota information in influxDB with time property.
  */
 @Data
 @Measurement(name = "quota")

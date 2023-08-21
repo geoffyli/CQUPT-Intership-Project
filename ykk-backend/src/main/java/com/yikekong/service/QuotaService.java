@@ -27,13 +27,17 @@ public interface QuotaService extends IService<QuotaEntity>{
 
 
     /**
-     * 保存指标数据列表到influxdb
-     * @param quotaDTOList
+     * Save the quota info to influxdb
+     * @param quotaDTOList The quota info list
      */
     void saveQuotaToInflux(List<QuotaDTO> quotaDTOList);
 
 
-
+    /**
+     * Get the last quota list by device id
+     * @param deviceId The device id
+     * @return The last quota list
+     */
     List<QuotaInfo> getLastQuotaList(String deviceId);
 
 

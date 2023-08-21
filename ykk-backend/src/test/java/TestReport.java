@@ -23,7 +23,7 @@ public class TestReport {
     @Test
     public void testAlarmTrend(){
 
-        List<TrendPoint> trendPointList = reportService.getAlarmTrend("2020-09-01", "2020-09-30", 3);
+        List<TrendPoint> trendPointList = reportService.getAlarmTrend("2023-08-01", "2023-08-07", 3);
 
         for(TrendPoint trendPoint:trendPointList){
             try {

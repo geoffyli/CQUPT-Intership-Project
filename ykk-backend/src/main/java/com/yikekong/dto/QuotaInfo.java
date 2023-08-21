@@ -4,38 +4,41 @@ import lombok.Data;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
+/**
+ * This class is used to store the quota information in influxDB.
+ */
 @Data
 @Measurement(name = "quota")
 public class QuotaInfo {
 
-    @Column(name = "deviceId",tag = true)
-    private String deviceId;//设备id
+    @Column(name = "deviceId", tag = true)
+    private String deviceId; // The device ID
 
-    @Column(name = "quotaId",tag = true)
-    private String quotaId;//指标id
+    @Column(name = "quotaId", tag = true)
+    private String quotaId; // The quota ID
 
-    @Column(name = "quotaName",tag = true)
-    private String quotaName;//指标名称
+    @Column(name = "quotaName", tag = true)
+    private String quotaName; // The quota name
 
-    @Column(name = "alarm" ,tag = true)
-    private String alarm;//是否告警  0：不告警  1：告警
+    @Column(name = "alarm", tag = true)
+    private String alarm; // The alarm status, 0 means no alarm, 1 means alarm
 
-    @Column(name = "level" ,tag = true)
-    private String level;//告警级别
+    @Column(name = "level", tag = true)
+    private String level; // The alarm level
 
-    @Column(name = "alarmName" ,tag = true)
-    private String alarmName;//告警名称
+    @Column(name = "alarmName", tag = true)
+    private String alarmName; // The alarm name
 
-    @Column(name = "unit",tag = true)
-    private String unit;//单位
+    @Column(name = "unit", tag = true)
+    private String unit; // The unit of the quota
 
-    @Column(name = "referenceValue",tag = true)
-    private String referenceValue;//参考值
+    @Column(name = "referenceValue", tag = true)
+    private String referenceValue; // The reference value of the quota
 
     @Column(name = "value")
-    private Double value;//数值指标
+    private Double value; // Number quota
 
     @Column(name = "stringValue")
-    private String stringValue;//非数值指标
+    private String stringValue; // Non-number quota
 
 }

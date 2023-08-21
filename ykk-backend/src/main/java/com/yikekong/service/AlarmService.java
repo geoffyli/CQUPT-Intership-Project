@@ -39,14 +39,14 @@ public interface AlarmService extends IService<AlarmEntity>{
 
 
     /**
-     * 告警日志查询
-     * @param page 页码
-     * @param pageSize 页大小
-     * @param start 开始时间
-     * @param end 截至时间
-     * @param alarmName 告警名称
-     * @param deviceId 设备编号
-     * @return
+     * Query the alarm log
+     * @param page The page number
+     * @param pageSize The page size
+     * @param start The start time
+     * @param end The end time
+     * @param alarmName The alarm name
+     * @param deviceId The device id
+     * @return The alarm log in pager
      */
     Pager<QuotaAllInfo> queryAlarmLog( Long page,Long pageSize,String start,String end,String alarmName,String deviceId );
 

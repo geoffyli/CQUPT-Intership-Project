@@ -298,9 +298,9 @@ public class ESRepository {
 
 
     /**
-     * 统计所有设备数量
+     * Count the number of all devices.
      *
-     * @return
+     * @return The number of all devices
      */
     public Long getAllDeviceCount() {
 
@@ -319,9 +319,9 @@ public class ESRepository {
 
 
     /**
-     * 统计所有离线设备数量
+     * Count the number of all offline devices.
      *
-     * @return
+     * @return The number of all offline devices
      */
     public Long getOfflineCount() {
 
@@ -343,9 +343,9 @@ public class ESRepository {
 
 
     /**
-     * 统计所有告警设备数量
+     * Count the number of all devices with alarm.
      *
-     * @return
+     * @return The number of all devices with alarm
      */
     public Long getAlarmCount() {
 

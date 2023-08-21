@@ -10,13 +10,13 @@ import com.yikekong.vo.PieVO;
 import java.util.List;
 
 /**
- * 报表服务
+ * Report data to the front end
  */
 public interface ReportService {
 
 
     /**
-     * 设备状态分布
+     * Get the device status statistics
      * @return
      */
     List<PieVO> getStatusCollect();

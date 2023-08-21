@@ -3,6 +3,7 @@ package com.yikekong.controller;
 import com.yikekong.dto.DeviceDTO;
 import com.yikekong.service.DeviceService;
 import com.yikekong.service.NoticeService;
+import com.yikekong.vo.DeviceListVO;
 import com.yikekong.vo.DeviceQuotaVO;
 import com.yikekong.vo.DeviceVO;
 import com.yikekong.vo.Pager;

@@ -64,8 +64,9 @@ public class EmqMsgProcess implements MqttCallback {
             deviceInfoDTO = alarmService.verifyDeviceInfo(deviceInfoDTO);
             // Save the device information
             deviceService.saveDeviceInfo(deviceInfoDTO.getDevice());
-//            // Save the device quota information
-//            quotaService.saveQuotaToInflux(deviceInfoDTO.getQuotaList());
+
+            // Save the device quota information to InfluxDB
+            quotaService.saveQuotaToInflux(deviceInfoDTO.getQuotaList());
 //
 //            //指标透传
 //            noticeService.quotaTransfer(deviceInfoDTO.getQuotaList());

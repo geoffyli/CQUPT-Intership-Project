@@ -5,7 +5,7 @@ import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
 /**
- * 封装统计记录数
+ * Entity class for the quota count
  */
 @Data
 @Measurement(name = "quota")

@@ -7,6 +7,7 @@ import com.yikekong.dto.QuotaInfo;
 import com.yikekong.es.ESRepository;
 import com.yikekong.service.DeviceService;
 import com.yikekong.service.QuotaService;
+import com.yikekong.vo.DeviceListVO;
 import com.yikekong.vo.DeviceQuotaVO;
 import com.yikekong.vo.Pager;
 import lombok.extern.slf4j.Slf4j;
@@ -93,24 +94,30 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Pager<DeviceQuotaVO> queryDeviceQuota(Long page, Long pageSize, String deviceId, String tag, Integer state) {
 
-        //1.查询设备列表
-
+        /*
+        Query device list from ES
+         */
         Pager<DeviceDTO> pager = esRepository.searchDevice(page, pageSize, deviceId, tag, state);
 
 
-        //2.查询指标列表
+        /*
+        Traverse the device list, query the latest quota of each device from influxdb, and encapsulate the result to VO
+         */
         List<DeviceQuotaVO> deviceQuotaVOList = Lists.newArrayList();
+        // traverse the device list
         pager.getItems().forEach(deviceDTO -> {
             DeviceQuotaVO deviceQuotaVO = new DeviceQuotaVO();
             BeanUtils.copyProperties(deviceDTO, deviceQuotaVO);
-            //查询指标
+            // Query the latest quota of each device from influxdb
             List<QuotaInfo> quotaList = quotaService.getLastQuotaList(deviceDTO.getDeviceId());
             deviceQuotaVO.setQuotaList(quotaList);
             deviceQuotaVOList.add(deviceQuotaVO);
         });
 
-        //3.封装返回结果
-        Pager<DeviceQuotaVO> pageResult = new Pager(pager.getCounts(), pageSize);
+        /*
+        Encapsulate the VO list into a paging object
+         */
+        Pager<DeviceQuotaVO> pageResult = new Pager<>(pager.getCounts(), pageSize);
         pageResult.setItems(deviceQuotaVOList);
 
         return pageResult;

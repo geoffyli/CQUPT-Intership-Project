@@ -6,17 +6,17 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 设备指标详情vo
+ * Device quota info VO
  */
 @Data
 public class DeviceQuotaVO {
 
-    private String deviceId;//设备编号
+    private String deviceId; // The device id
 
-    private Boolean online;//在线状态
+    private Boolean online; // Whether the device is online
 
-    private Integer level;//告警级别
+    private Integer level; // The alarm level
 
-    private List<QuotaInfo> quotaList;//指标列表
+    private List<QuotaInfo> quotaList; // The quota list
         
 }

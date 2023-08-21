@@ -128,11 +128,13 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
 
     @Override
     public void saveQuotaToInflux(List<QuotaDTO> quotaDTOList) {
-
+        // Transform the quotaDTO to quotaInfo
         for (QuotaDTO quotaDTO : quotaDTOList) {
+            // Create the quotaInfo and copy the quotaDTO info
             QuotaInfo quotaInfo = new QuotaInfo();
             BeanUtils.copyProperties(quotaDTO, quotaInfo);
             quotaInfo.setQuotaId(quotaDTO.getId() + "");
+            // Save the quotaInfo to influx
             influxRepository.add(quotaInfo);
         }
 

@@ -2,6 +2,7 @@ package com.yikekong.service;
 
 
 import com.yikekong.dto.DeviceDTO;
+import com.yikekong.vo.DeviceListVO;
 import com.yikekong.vo.DeviceQuotaVO;
 import com.yikekong.vo.Pager;
 
@@ -52,20 +53,20 @@ public interface DeviceService {
      * Update the device status
      *
      * @param deviceId The device ID
-     * @param online  The status of the device
+     * @param online   The status of the device
      */
     void updateOnLine(String deviceId, Boolean online);
 
 
     /**
-     * 查询设备详情
+     * Query device quota details
      *
-     * @param page
-     * @param pageSize
-     * @param deviceId
-     * @param tag
-     * @param state
-     * @return
+     * @param page     The current page number
+     * @param pageSize The number of records per page
+     * @param deviceId The device ID
+     * @param tag      The tag of the device
+     * @param state    The status of the device
+     * @return The device quota information
      */
     Pager<DeviceQuotaVO> queryDeviceQuota(Long page, Long pageSize, String deviceId, String tag, Integer state);
 

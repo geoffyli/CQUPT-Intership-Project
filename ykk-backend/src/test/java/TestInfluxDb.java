@@ -44,7 +44,7 @@ public class TestInfluxDb {
 
     @Test
     public void testFindLast(){
-        List<QuotaInfo> quotaList = quotaService.getLastQuotaList("100001");
+        List<QuotaInfo> quotaList = quotaService.getLastQuotaList("10011");
 
         try {
             String json = JsonUtil.serialize(quotaList);

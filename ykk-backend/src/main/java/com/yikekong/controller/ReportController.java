@@ -36,7 +36,7 @@ public class ReportController {
      * Get real-time monitor data
      * @return the number of all devices and alarm devices
      */
-    @GetMapping("/monitor")
+    @GetMapping("/statistic")
     public MonitorVO getMonitorData(){
         MonitorVO monitorVO=new MonitorVO();
         monitorVO.setDeviceCount( esRepository.getAllDeviceCount() );

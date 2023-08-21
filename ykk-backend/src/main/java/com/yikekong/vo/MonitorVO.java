@@ -3,13 +3,11 @@ package com.yikekong.vo;
 import lombok.Data;
 
 /**
- * 监控数据
+ * Monitor data
  */
 @Data
 public class MonitorVO {
+    private Long deviceCount;
 
-    private Long deviceCount;//设备数量
-
-    private Long alarmCount;// 告警设备数
-
+    private Long alarmCount;
 }

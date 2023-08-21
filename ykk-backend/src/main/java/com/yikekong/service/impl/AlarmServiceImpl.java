@@ -77,7 +77,7 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
             // If the quota value type is string or boolean
             if ("String".equals(quotaDTO.getValueType()) || "Boolean".equals(quotaDTO.getValueType())) {
                 if (alarmEntity.getOperator().equals("=")) {
-                    if (alarmEntity.getThreshold().toString().equals(quotaDTO.getStringValue())){
+                    if (alarmEntity.getThreshold().toString().equals(quotaDTO.getStringValue())) {
                         alarm = alarmEntity;
                         break;
                     }
@@ -146,60 +146,72 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
     @Override
     public Pager<QuotaAllInfo> queryAlarmLog(Long page, Long pageSize, String start, String end, String
             alarmName, String deviceId) {
-
-
-        //1.where条件查询语句部分构建
-
-        StringBuilder whereQl = new StringBuilder("where alarm='1' ");
+        /*
+        Construct "where" clause
+         */
+        StringBuilder whereQl = new StringBuilder("where alarm='1' "); // alarm='1' means in alarm
         if (!Strings.isNullOrEmpty(start)) {
-            whereQl.append("and time>='" + start + "' ");
+            whereQl.append("and time>='").append(start).append("' "); // Filter by start time
         }
         if (!Strings.isNullOrEmpty(end)) {
-            whereQl.append("and time<='" + end + "' ");
+            whereQl.append("and time<='").append(end).append("' "); // Filter by end time
         }
         if (!Strings.isNullOrEmpty(alarmName)) {
-            whereQl.append("and alarmName=~/" + alarmName + "/ ");
+            whereQl.append("and alarmName=~/").append(alarmName).append("/ "); // Filter by alarm name (vague match)
         }
         if (!Strings.isNullOrEmpty(deviceId)) {
-            whereQl.append("and deviceId=~/^" + deviceId + "/ ");
+            whereQl.append("and deviceId=~/^").append(deviceId).append("/ "); // Filter by device id (prefix match)
         }
 
-        //2.查询记录语句
+        /*
+        Construct query language
+         */
         StringBuilder listQl = new StringBuilder("select * from quota  ");
-        listQl.append(whereQl.toString());
-        listQl.append("order by desc limit " + pageSize + " offset " + (page - 1) * pageSize);
+        listQl.append(whereQl);
+        listQl.append("order by desc limit ").append(pageSize).append(" offset ").append((page - 1) * pageSize);
 
 
-        //3.查询记录数语句
+        /*
+        Construct count query language
+         */
         StringBuilder countQl = new StringBuilder("select count(value) from quota ");
-        countQl.append(whereQl.toString());
+        countQl.append(whereQl);
 
 
-        //4.执行查询记录语句
+        /*
+        Execute query language
+         */
         List<QuotaAllInfo> quotaList = influxRepository.query(listQl.toString(), QuotaAllInfo.class);
-        // 添加时间格式处理
+
+        /*
+        Convert time format
+         */
         for (QuotaAllInfo quotaAllInfo : quotaList) {
             //2020-09-19T09:58:34.926Z   DateTimeFormatter.ISO_OFFSET_DATE_TIME
-            //转换为 2020-09-19 09:58:34  格式
+            //2020-09-19 09:58:34
             LocalDateTime dateTime = LocalDateTime.parse(quotaAllInfo.getTime(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             String time = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"));
             quotaAllInfo.setTime(time);
         }
 
-        //5.执行统计语句
+        /*
+        Execute count query language
+         */
         List<QuotaCount> quotaCount = influxRepository.query(countQl.toString(), QuotaCount.class);
 
-        //6.封装返回结果
+        /*
+        Return the result
+         */
         if (quotaCount == null || quotaCount.size() == 0) {
+            // Set an empty pager
             Pager<QuotaAllInfo> pager = new Pager<QuotaAllInfo>(0L, 0L);
             pager.setPage(0);
             pager.setItems(Lists.newArrayList());
             return pager;
         }
 
-
-        Long totalCount = quotaCount.get(0).getCount();//总记录数
-
+        Long totalCount = quotaCount.get(0).getCount(); // Get the total count
+        // Construct the pager
         Pager<QuotaAllInfo> pager = new Pager<>(totalCount, pageSize);
         pager.setPage(page);
         pager.setItems(quotaList);

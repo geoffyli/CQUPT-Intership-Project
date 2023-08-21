@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/quota")
-public class QuotaController{
+public class QuotaController {
 
     @Autowired
     private QuotaService quotaService;

@@ -2,13 +2,14 @@ package com.yikekong.vo;
 
 import lombok.Data;
 
+/**
+ * This is the VO for the pie chart
+ */
 @Data
 public class PieVO {
+    private String name;
 
-
-    private String name;//名称
-
-    private Long value;//值
+    private Long value;
 
 
 }

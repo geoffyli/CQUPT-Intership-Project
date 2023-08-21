@@ -7,7 +7,7 @@ import org.influxdb.annotation.Measurement;
 import java.io.Serializable;
 
 /**
- * 封装折线图类结果的数据
+ * This class is used to store the data of the device trend chart
  */
 @Data
 @Measurement(name = "quota")
