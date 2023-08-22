@@ -6,7 +6,7 @@ import com.sensonet.exception.BussinessException;
 import com.sensonet.vo.AlarmVO;
 import com.sensonet.vo.Pager;
 
-import com.sensonet.entity.AlarmEntity;
+import com.sensonet.mapper.entity.AlarmEntity;
 import com.sensonet.service.AlarmService;
 
 import org.springframework.beans.BeanUtils;

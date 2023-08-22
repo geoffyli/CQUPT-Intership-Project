@@ -1,6 +1,6 @@
 package com.sensonet.controller;
 
-import com.sensonet.entity.AdminEntity;
+import com.sensonet.mapper.entity.AdminEntity;
 import com.sensonet.vo.AdminVO;
 import com.sensonet.vo.LoginResultVO;
 import com.sensonet.service.AdminService;

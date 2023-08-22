@@ -1,4 +1,4 @@
-package com.sensonet.entity;
+package com.sensonet.mapper.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

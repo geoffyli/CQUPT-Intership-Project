@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.sensonet.dto.DeviceInfoDTO;
 import com.sensonet.dto.QuotaDTO;
 import com.sensonet.dto.QuotaInfo;
-import com.sensonet.entity.QuotaEntity;
+import com.sensonet.mapper.entity.QuotaEntity;
 
 import java.util.List;
 import java.util.Map;

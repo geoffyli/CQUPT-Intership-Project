@@ -2,7 +2,7 @@ package com.sensonet.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sensonet.entity.AlarmEntity;
+import com.sensonet.mapper.entity.AlarmEntity;
 import org.apache.ibatis.annotations.*;
 
 @Mapper

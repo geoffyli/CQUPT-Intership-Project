@@ -3,7 +3,7 @@ package com.sensonet.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Strings;
-import com.sensonet.entity.AdminEntity;
+import com.sensonet.mapper.entity.AdminEntity;
 import com.sensonet.mapper.AdminMapper;
 import com.sensonet.service.AdminService;
 import com.sensonet.util.JwtUtil;

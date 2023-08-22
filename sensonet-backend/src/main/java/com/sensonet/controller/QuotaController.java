@@ -1,14 +1,13 @@
 package com.sensonet.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.sensonet.emq.EmqClient;
-import com.sensonet.entity.AlarmEntity;
+import com.sensonet.mapper.entity.AlarmEntity;
 import com.sensonet.exception.BussinessException;
 import com.sensonet.service.AlarmService;
 import com.sensonet.vo.Pager;
 import com.sensonet.vo.QuotaVO;
-import com.sensonet.entity.QuotaEntity;
+import com.sensonet.mapper.entity.QuotaEntity;
 import com.sensonet.service.QuotaService;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.beans.BeanUtils;

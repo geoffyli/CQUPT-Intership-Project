@@ -1,7 +1,7 @@
 package com.sensonet.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sensonet.entity.AdminEntity;
+import com.sensonet.mapper.entity.AdminEntity;
 
 public interface AdminService extends IService<AdminEntity>{
     /**

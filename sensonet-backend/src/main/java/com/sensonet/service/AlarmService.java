@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.sensonet.dto.DeviceInfoDTO;
 import com.sensonet.dto.QuotaAllInfo;
 import com.sensonet.dto.QuotaDTO;
-import com.sensonet.entity.AlarmEntity;
+import com.sensonet.mapper.entity.AlarmEntity;
 import com.sensonet.vo.Pager;
 
 public interface AlarmService extends IService<AlarmEntity>{

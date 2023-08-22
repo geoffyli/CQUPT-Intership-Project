@@ -2,22 +2,16 @@ package com.sensonet.service.impl;
 
 import com.google.common.collect.Lists;
 import com.sensonet.dto.*;
-import com.sensonet.entity.BoardEntity;
 import com.sensonet.es.ESRepository;
 import com.sensonet.influx.InfluxRepository;
-import com.sensonet.service.BoardService;
 import com.sensonet.service.ReportService;
-import com.sensonet.vo.BoardQuotaData;
 //import com.sensonet.vo.BoardQuotaVO;
-import com.sensonet.vo.Pager;
 import com.sensonet.vo.PieVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

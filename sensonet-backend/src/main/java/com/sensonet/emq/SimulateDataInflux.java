@@ -2,7 +2,7 @@ package com.sensonet.emq;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Maps;
-import com.sensonet.entity.QuotaEntity;
+import com.sensonet.mapper.entity.QuotaEntity;
 import com.sensonet.service.QuotaService;
 import com.sensonet.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;

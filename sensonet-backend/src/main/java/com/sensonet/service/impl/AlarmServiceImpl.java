@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sensonet.dto.*;
-import com.sensonet.entity.AlarmEntity;
+import com.sensonet.mapper.entity.AlarmEntity;
 import com.sensonet.influx.InfluxRepository;
 import com.sensonet.mapper.AlarmMapper;
 import com.sensonet.service.AlarmService;

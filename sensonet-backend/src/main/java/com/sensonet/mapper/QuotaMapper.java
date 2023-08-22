@@ -1,7 +1,7 @@
 package com.sensonet.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.sensonet.entity.QuotaEntity;
+import com.sensonet.mapper.entity.QuotaEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
