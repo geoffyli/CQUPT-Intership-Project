@@ -15,9 +15,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties
 @EnableScheduling
 @EnableAsync
-public class YkkApplication{
+public class SensonetApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YkkApplication.class, args);
+        SpringApplication.run(SensonetApplication.class, args);
     }
 }

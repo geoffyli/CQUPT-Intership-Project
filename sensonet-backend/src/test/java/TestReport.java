@@ -1,5 +1,5 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sensonet.YkkApplication;
+import com.sensonet.SensonetApplication;
 import com.sensonet.dto.TrendPoint;
 import com.sensonet.dto.TrendPoint2;
 import com.sensonet.service.ReportService;
@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-@SpringBootTest(classes = YkkApplication.class)
+@SpringBootTest(classes = SensonetApplication.class)
 @RunWith(SpringRunner.class)
 public class TestReport {
 

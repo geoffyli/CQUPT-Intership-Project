@@ -1,5 +1,5 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.sensonet.YkkApplication;
+import com.sensonet.SensonetApplication;
 import com.sensonet.dto.DeviceInfoDTO;
 import com.sensonet.service.AlarmService;
 import com.sensonet.service.QuotaService;
@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.HashMap;
 import java.util.Map;
 
-@SpringBootTest(classes = YkkApplication.class)
+@SpringBootTest(classes = SensonetApplication.class)
 @RunWith(SpringRunner.class)
 public class TestQuota {
 
