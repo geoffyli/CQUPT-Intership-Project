@@ -35,14 +35,10 @@ public class EmqMsgProcess implements MqttCallback {
     private DeviceService deviceService;
 
     @Autowired
-    private GpsService gpsService;
-
-    @Autowired
     private ESRepository esRepository;
 
-    @Autowired
-    private NoticeService noticeService;
-
+//    @Autowired
+//    private NoticeService noticeService;
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         // Message received

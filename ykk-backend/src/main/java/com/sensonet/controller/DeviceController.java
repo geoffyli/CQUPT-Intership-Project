@@ -2,7 +2,7 @@ package com.sensonet.controller;
 
 import com.sensonet.dto.DeviceDTO;
 import com.sensonet.service.DeviceService;
-import com.sensonet.service.NoticeService;
+//import com.sensonet.service.NoticeService;
 import com.sensonet.vo.DeviceQuotaVO;
 import com.sensonet.vo.DeviceVO;
 import com.sensonet.vo.Pager;
@@ -65,8 +65,8 @@ public class DeviceController {
         return deviceService.queryPage(page, pageSize, sn, tag, null);
     }
 
-    @Autowired
-    private NoticeService noticeService;
+//    @Autowired
+//    private NoticeService noticeService;
 
     /**
      * Get disconnected device information

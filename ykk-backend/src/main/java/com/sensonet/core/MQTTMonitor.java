@@ -1,7 +1,6 @@
 package com.sensonet.core;
 
 import com.sensonet.emq.EmqClient;
-import com.sensonet.service.GpsService;
 import com.sensonet.service.QuotaService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -23,8 +22,6 @@ public class MQTTMonitor {
     @Autowired
     private QuotaService quotaService;
 
-    @Autowired
-    private GpsService gpsService;
 
 
     /**
@@ -50,16 +47,6 @@ public class MQTTMonitor {
                 e.printStackTrace();
             }
         });
-
-//        //gps订阅
-//        GPSEntity gpsEntity = gpsService.getGps();  //读取gps配置
-//        //共享订阅模式
-//        try {
-//            emqClient.subscribe("$queue/"+gpsEntity.getSubject());
-//        } catch (MqttException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
 }

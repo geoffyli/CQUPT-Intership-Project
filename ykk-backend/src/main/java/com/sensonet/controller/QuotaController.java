@@ -105,19 +105,19 @@ public class QuotaController {
     }
 
 
-    /**
-     * 分页获取数值型指标
-     * @param page
-     * @param pageSize
-     * @return
-     */
-    @GetMapping("/numberQuota")
-    public Pager<QuotaEntity> queryNumberQuota(
-            @RequestParam(value = "page",required = false ,defaultValue = "1") Long page,
-            @RequestParam(value = "pageSize",required = false ,defaultValue = "10")  Long pageSize ){
-
-        IPage<QuotaEntity> pageResult = quotaService.queryNumberQuota(page, pageSize);
-        return new Pager<>( pageResult );
-    }
+//    /**
+//     * 分页获取数值型指标
+//     * @param page
+//     * @param pageSize
+//     * @return
+//     */
+//    @GetMapping("/numberQuota")
+//    public Pager<QuotaEntity> queryNumberQuota(
+//            @RequestParam(value = "page",required = false ,defaultValue = "1") Long page,
+//            @RequestParam(value = "pageSize",required = false ,defaultValue = "10")  Long pageSize ){
+//
+//        IPage<QuotaEntity> pageResult = quotaService.queryNumberQuota(page, pageSize);
+//        return new Pager<>( pageResult );
+//    }
 
 }

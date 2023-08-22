@@ -41,13 +41,13 @@ public interface QuotaService extends IService<QuotaEntity>{
     List<QuotaInfo> getLastQuotaList(String deviceId);
 
 
-    /**
-     * 获取数值型指标列表
-     * @param page
-     * @param pageSize
-     * @return
-     */
-    IPage<QuotaEntity> queryNumberQuota(Long page,Long pageSize);
+//    /**
+//     * 获取数值型指标列表
+//     * @param page
+//     * @param pageSize
+//     * @return
+//     */
+//    IPage<QuotaEntity> queryNumberQuota(Long page,Long pageSize);
 
 
 }

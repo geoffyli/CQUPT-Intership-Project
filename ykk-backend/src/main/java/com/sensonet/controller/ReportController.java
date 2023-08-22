@@ -100,59 +100,59 @@ public class ReportController {
     }
 
 
-    /**
-     * 通过指标查询设备列表
-     * @param page
-     * @param pageSize
-     * @param quotaId
-     * @return
-     */
-    @GetMapping("/devices")
-    public Pager<String> getDeviceByQuota(
-            @RequestParam(value = "page",required = false,defaultValue = "1") Long page,
-            @RequestParam(value = "pageSize",required = false,defaultValue = "10") Long pageSize,
-            @RequestParam(value = "quotaId") String quotaId ){
+//    /**
+//     * 通过指标查询设备列表
+//     * @param page
+//     * @param pageSize
+//     * @param quotaId
+//     * @return
+//     */
+//    @GetMapping("/devices")
+//    public Pager<String> getDeviceByQuota(
+//            @RequestParam(value = "page",required = false,defaultValue = "1") Long page,
+//            @RequestParam(value = "pageSize",required = false,defaultValue = "10") Long pageSize,
+//            @RequestParam(value = "quotaId") String quotaId ){
+//
+//        return  reportService.getDeviceByQuota( page,pageSize,quotaId );
+//
+//    }
 
-        return  reportService.getDeviceByQuota( page,pageSize,quotaId );
-
-    }
-
-    /**
-     * 报表预览
-     * @param previewVO
-     * @return
-     */
-    @PostMapping("/preview")
-    public BoardQuotaVO getPreviewData( @RequestBody PreviewVO previewVO ){
-        BoardQuotaVO boardData = reportService.getBoardData(
-                previewVO.getQuotaId(), previewVO.getDeviceIdList(), previewVO.getStart(), previewVO.getEnd(), previewVO.getType());
-
-        //时间处理
-        List<String> xdata=Lists.newArrayList();
-
-        for(String x:boardData.getXdata()){
-            xdata.add(formatTime(x,previewVO.getType() ))  ;
-        }
-        boardData.setXdata(xdata);
-
-        return boardData;
-    }
+//    /**
+//     * 报表预览
+//     * @param previewVO
+//     * @return
+//     */
+//    @PostMapping("/preview")
+//    public BoardQuotaVO getPreviewData( @RequestBody PreviewVO previewVO ){
+//        BoardQuotaVO boardData = reportService.getBoardData(
+//                previewVO.getQuotaId(), previewVO.getDeviceIdList(), previewVO.getStart(), previewVO.getEnd(), previewVO.getType());
+//
+//        //时间处理
+//        List<String> xdata=Lists.newArrayList();
+//
+//        for(String x:boardData.getXdata()){
+//            xdata.add(formatTime(x,previewVO.getType() ))  ;
+//        }
+//        boardData.setXdata(xdata);
+//
+//        return boardData;
+//    }
 
 
-    /**
-     * 获取面板数据
-     * @param id
-     * @param start
-     * @param end
-     * @param type
-     * @return
-     */
-    @GetMapping("/boardData/{id}/{start}/{end}/{type}")
-    public BoardQuotaVO getBoardData(@PathVariable Integer id,
-                                     @PathVariable String start,
-                                     @PathVariable String end,
-                                     @PathVariable Integer type){
-        return reportService.getBoardData(id,start,end,type);
-    }
+//    /**
+//     * 获取面板数据
+//     * @param id
+//     * @param start
+//     * @param end
+//     * @param type
+//     * @return
+//     */
+//    @GetMapping("/boardData/{id}/{start}/{end}/{type}")
+//    public BoardQuotaVO getBoardData(@PathVariable Integer id,
+//                                     @PathVariable String start,
+//                                     @PathVariable String end,
+//                                     @PathVariable Integer type){
+//        return reportService.getBoardData(id,start,end,type);
+//    }
 
 }

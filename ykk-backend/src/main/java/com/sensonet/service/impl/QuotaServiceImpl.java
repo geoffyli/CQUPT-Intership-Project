@@ -147,20 +147,20 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
         return influxRepository.query(ql, QuotaInfo.class);
     }
 
-    @Override
-    public IPage<QuotaEntity> queryNumberQuota(Long page, Long pageSize) {
-
-        Page<QuotaEntity> pageResult = new Page<>(page, pageSize);
-
-        LambdaQueryWrapper<QuotaEntity> wrapper = new LambdaQueryWrapper<>();
-
-        wrapper.eq(QuotaEntity::getValueType, "Long")
-                .or()
-                .eq(QuotaEntity::getValueType, "Integer")
-                .or()
-                .eq(QuotaEntity::getValueType, "Double");
-
-        return this.page(pageResult, wrapper);
-    }
+//    @Override
+//    public IPage<QuotaEntity> queryNumberQuota(Long page, Long pageSize) {
+//
+//        Page<QuotaEntity> pageResult = new Page<>(page, pageSize);
+//
+//        LambdaQueryWrapper<QuotaEntity> wrapper = new LambdaQueryWrapper<>();
+//
+//        wrapper.eq(QuotaEntity::getValueType, "Long")
+//                .or()
+//                .eq(QuotaEntity::getValueType, "Integer")
+//                .or()
+//                .eq(QuotaEntity::getValueType, "Double");
+//
+//        return this.page(pageResult, wrapper);
+//    }
 
 }

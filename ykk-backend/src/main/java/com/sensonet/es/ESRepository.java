@@ -3,7 +3,7 @@ package com.sensonet.es;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.sensonet.dto.DeviceDTO;
-import com.sensonet.dto.DeviceLocation;
+//import com.sensonet.dto.DeviceLocation;
 import com.sensonet.util.JsonUtil;
 import com.sensonet.vo.Pager;
 import lombok.extern.slf4j.Slf4j;
@@ -365,88 +365,88 @@ public class ESRepository {
     }
 
 
-    /**
-     * 更新设备gps信息
-     *
-     * @param deviceLocation
-     */
-    public void saveLocation(DeviceLocation deviceLocation) {
-
-        IndexRequest request = new IndexRequest("gps");
-        request.source("location", deviceLocation.getLocation());
-        request.id(deviceLocation.getDeviceId());
-        try {
-            restHighLevelClient.index(request, RequestOptions.DEFAULT);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("更新gps出错");
-        }
-
-    }
-
-
-    /**
-     * 搜索一定距离内的设备列表
-     *
-     * @param lat
-     * @param lon
-     * @param distance
-     * @return
-     */
-    public List<DeviceLocation> searchDeviceLocation(Double lat, Double lon, Integer distance) {
+//    /**
+//     * 更新设备gps信息
+//     *
+//     * @param deviceLocation
+//     */
+//    public void saveLocation(DeviceLocation deviceLocation) {
+//
+//        IndexRequest request = new IndexRequest("gps");
+//        request.source("location", deviceLocation.getLocation());
+//        request.id(deviceLocation.getDeviceId());
+//        try {
+//            restHighLevelClient.index(request, RequestOptions.DEFAULT);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            log.error("更新gps出错");
+//        }
+//
+//    }
 
 
-        //构建查询
-
-        SearchRequest searchRequest = new SearchRequest("gps");
-
-        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-
-        GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder("location");
-        geoDistanceQueryBuilder.distance(distance, DistanceUnit.KILOMETERS);
-        geoDistanceQueryBuilder.point(lat, lon);
-
-        searchSourceBuilder.query(geoDistanceQueryBuilder);
-
-        //排序
-        GeoDistanceSortBuilder distanceSortBuilder = new GeoDistanceSortBuilder("location", lat, lon);
-        distanceSortBuilder.unit(DistanceUnit.KILOMETERS);
-        distanceSortBuilder.order(SortOrder.ASC);//SortOrder.ASC 升序（由近到远）；
-        distanceSortBuilder.geoDistance(GeoDistance.ARC);//GeoDistance.ARC  精准度高，计算较慢
-
-        searchSourceBuilder.sort(distanceSortBuilder);
-
-
-        searchSourceBuilder.from(0);
-        searchSourceBuilder.size(200);
-
-        searchRequest.source(searchSourceBuilder);
-
-
-        //封装结果
-
-        try {
-            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-            SearchHits hits = searchResponse.getHits();
-            if (hits.getTotalHits().value <= 0) {
-                return Lists.newArrayList();
-            }
-
-            List<DeviceLocation> deviceLocationList = Lists.newArrayList();
-            Arrays.stream(hits.getHits()).forEach(h -> {
-                DeviceLocation deviceLocation = new DeviceLocation();
-                deviceLocation.setDeviceId(h.getId());
-                deviceLocation.setLocation(h.getSourceAsMap().get("location").toString());
-                deviceLocationList.add(deviceLocation);
-            });
-            return deviceLocationList;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Lists.newArrayList();
-        }
-
-    }
+//    /**
+//     * 搜索一定距离内的设备列表
+//     *
+//     * @param lat
+//     * @param lon
+//     * @param distance
+//     * @return
+//     */
+//    public List<DeviceLocation> searchDeviceLocation(Double lat, Double lon, Integer distance) {
+//
+//
+//        //构建查询
+//
+//        SearchRequest searchRequest = new SearchRequest("gps");
+//
+//        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//
+//        GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder("location");
+//        geoDistanceQueryBuilder.distance(distance, DistanceUnit.KILOMETERS);
+//        geoDistanceQueryBuilder.point(lat, lon);
+//
+//        searchSourceBuilder.query(geoDistanceQueryBuilder);
+//
+//        //排序
+//        GeoDistanceSortBuilder distanceSortBuilder = new GeoDistanceSortBuilder("location", lat, lon);
+//        distanceSortBuilder.unit(DistanceUnit.KILOMETERS);
+//        distanceSortBuilder.order(SortOrder.ASC);//SortOrder.ASC 升序（由近到远）；
+//        distanceSortBuilder.geoDistance(GeoDistance.ARC);//GeoDistance.ARC  精准度高，计算较慢
+//
+//        searchSourceBuilder.sort(distanceSortBuilder);
+//
+//
+//        searchSourceBuilder.from(0);
+//        searchSourceBuilder.size(200);
+//
+//        searchRequest.source(searchSourceBuilder);
+//
+//
+//        //封装结果
+//
+//        try {
+//            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+//            SearchHits hits = searchResponse.getHits();
+//            if (hits.getTotalHits().value <= 0) {
+//                return Lists.newArrayList();
+//            }
+//
+//            List<DeviceLocation> deviceLocationList = Lists.newArrayList();
+//            Arrays.stream(hits.getHits()).forEach(h -> {
+//                DeviceLocation deviceLocation = new DeviceLocation();
+//                deviceLocation.setDeviceId(h.getId());
+//                deviceLocation.setLocation(h.getSourceAsMap().get("location").toString());
+//                deviceLocationList.add(deviceLocation);
+//            });
+//            return deviceLocationList;
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return Lists.newArrayList();
+//        }
+//
+//    }
 
 
 }

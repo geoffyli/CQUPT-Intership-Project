@@ -2,8 +2,8 @@ package com.sensonet.service;
 
 import com.sensonet.dto.HeapPoint;
 import com.sensonet.dto.TrendPoint;
-import com.sensonet.dto.TrendPoint2;
-import com.sensonet.vo.BoardQuotaVO;
+//import com.sensonet.dto.TrendPoint2;
+//import com.sensonet.vo.BoardQuotaVO;
 import com.sensonet.vo.Pager;
 import com.sensonet.vo.PieVO;
 
@@ -41,50 +41,50 @@ public interface ReportService {
     List<HeapPoint> getTop10Alarm( String startTime,String endTime );
 
 
-    /**
-     * 通过指标获取设备列表
-     * @param page
-     * @param pageSize
-     * @param quotaId
-     * @return
-     */
-    Pager<String> getDeviceByQuota(Long page,Long pageSize,String quotaId);
+//    /**
+//     * 通过指标获取设备列表
+//     * @param page
+//     * @param pageSize
+//     * @param quotaId
+//     * @return
+//     */
+//    Pager<String> getDeviceByQuota(Long page,Long pageSize,String quotaId);
 
 
-    /**
-     * 获取指标趋势
-     * @param startTime
-     * @param endTime
-     * @param quotaId
-     * @param deviceId
-     * @param type
-     * @return
-     */
-    List<TrendPoint2> getQuotaTrend( String startTime,String endTime,String quotaId,String deviceId,int type  );
+//    /**
+//     * 获取指标趋势
+//     * @param startTime
+//     * @param endTime
+//     * @param quotaId
+//     * @param deviceId
+//     * @param type
+//     * @return
+//     */
+//    List<TrendPoint2> getQuotaTrend( String startTime,String endTime,String quotaId,String deviceId,int type  );
 
 
-    /**
-     * 指标趋势图
-     * @param quotaId
-     * @param deviceIds
-     * @param startTime
-     * @param endTime
-     * @param type
-     * @return
-     */
-    BoardQuotaVO getBoardData(String quotaId,List<String> deviceIds,String startTime,String endTime,Integer type  );
+//    /**
+//     * 指标趋势图
+//     * @param quotaId
+//     * @param deviceIds
+//     * @param startTime
+//     * @param endTime
+//     * @param type
+//     * @return
+//     */
+//    BoardQuotaVO getBoardData(String quotaId,List<String> deviceIds,String startTime,String endTime,Integer type  );
 
-
-    /**
-     * 获取面板数据
-     * @param id
-     * @param start
-     * @param end
-     * @param type
-     * @return
-     */
-    BoardQuotaVO getBoardData(Integer id, String start, String end, Integer type);
-
+//
+//    /**
+//     * 获取面板数据
+//     * @param id
+//     * @param start
+//     * @param end
+//     * @param type
+//     * @return
+//     */
+//    BoardQuotaVO getBoardData(Integer id, String start, String end, Integer type);
+//
 
 
 }
