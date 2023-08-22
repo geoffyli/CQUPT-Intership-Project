@@ -5,7 +5,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>sensonet-backend</module>
-        <module>sensonet-common</module>
     </modules>
     <!-- Spring boot parent project-->
     <parent>

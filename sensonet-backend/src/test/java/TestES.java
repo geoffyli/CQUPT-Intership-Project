@@ -1,7 +1,6 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sensonet.SensonetApplication;
 import com.sensonet.dto.DeviceDTO;
-import com.sensonet.dto.DeviceLocation;
 import com.sensonet.es.ESRepository;
 import com.sensonet.util.JsonUtil;
 import org.junit.Test;
@@ -94,17 +93,6 @@ public class TestES {
 
     }
 
-
-    @Test
-    public void testGEO() {
-
-        List<DeviceLocation> deviceLocationList = esRepository.searchDeviceLocation(40.722, -73.989, 10);
-        try {
-            System.out.println(JsonUtil.serialize(deviceLocationList));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 }
