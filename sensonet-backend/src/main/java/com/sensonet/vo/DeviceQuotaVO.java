@@ -1,6 +1,6 @@
 package com.sensonet.vo;
 
-import com.sensonet.dto.QuotaInfo;
+import com.sensonet.dto.QuotaInfoDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -17,6 +17,6 @@ public class DeviceQuotaVO {
 
     private Integer level; // The alarm level
 
-    private List<QuotaInfo> quotaList; // The quota list
+    private List<QuotaInfoDTO> quotaList; // The quota list
         
 }

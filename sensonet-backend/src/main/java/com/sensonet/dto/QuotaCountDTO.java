@@ -9,7 +9,7 @@ import org.influxdb.annotation.Measurement;
  */
 @Data
 @Measurement(name = "quota")
-public class QuotaCount {
+public class QuotaCountDTO {
 
     @Column(name = "count")
     private Long count;

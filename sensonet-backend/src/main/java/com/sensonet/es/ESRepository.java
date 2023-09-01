@@ -16,22 +16,17 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.common.Strings;
-import org.elasticsearch.common.geo.GeoDistance;
-import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.elasticsearch.search.sort.GeoDistanceSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,7 +66,7 @@ public class ESRepository {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("设备添加发生异常");
+            log.error("Add device to ES failed, device ID: " + deviceDTO.getDeviceId());
         }
     }
 
@@ -112,7 +107,7 @@ public class ESRepository {
 
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("查询设备异常");
+            log.error("Search device by ID failed, device ID: " + deviceId);
             return null;
         }
     }
@@ -135,7 +130,7 @@ public class ESRepository {
             return true;
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("更新设备状态出错");
+            log.error("Update device status failed, device ID: " + deviceId);
             return false;
         }
     }
@@ -158,7 +153,7 @@ public class ESRepository {
             return true;
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("更新设备标签出错");
+            log.error("Update device tag failed, device ID: " + deviceId);
             return false;
         }
     }
@@ -168,9 +163,8 @@ public class ESRepository {
      * Update the device alarm information.
      *
      * @param deviceDTO The device DTO
-     * @return If the update is successful, return true. Otherwise, return false.
      */
-    public boolean updateDevicesAlarm(DeviceDTO deviceDTO) {
+    public void updateDevicesAlarm(DeviceDTO deviceDTO) {
         // Create a new update request
         UpdateRequest updateRequest = new UpdateRequest("devices", deviceDTO.getDeviceId())
                 .doc("alarm", deviceDTO.getAlarm(), // whether the device is in alarm
@@ -179,11 +173,9 @@ public class ESRepository {
         try {
             // Update the device alarm information
             restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("更新设备告警信息出错");
-            return false;
+            log.error("Update device alarm failed, device ID: " + deviceDTO.getDeviceId());
         }
     }
 
@@ -192,20 +184,17 @@ public class ESRepository {
      *
      * @param deviceId The device ID
      * @param online   The online status
-     * @return If the update is successful, return true. Otherwise, return false.
      */
-    public boolean updateOnline(String deviceId, Boolean online) {
+    public void updateOnline(String deviceId, Boolean online) {
         // Create a new update request
         UpdateRequest updateRequest = new UpdateRequest("devices", deviceId)
                 .doc("online", online);
         try {
             // Update the online status of the device
             restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT);
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("更新在线状态出错");
-            return false;
+            log.error("Update device online status failed, device ID: " + deviceId);
         }
     }
 
@@ -363,90 +352,6 @@ public class ESRepository {
         }
 
     }
-
-
-//    /**
-//     * 更新设备gps信息
-//     *
-//     * @param deviceLocation
-//     */
-//    public void saveLocation(DeviceLocation deviceLocation) {
-//
-//        IndexRequest request = new IndexRequest("gps");
-//        request.source("location", deviceLocation.getLocation());
-//        request.id(deviceLocation.getDeviceId());
-//        try {
-//            restHighLevelClient.index(request, RequestOptions.DEFAULT);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            log.error("更新gps出错");
-//        }
-//
-//    }
-
-
-//    /**
-//     * 搜索一定距离内的设备列表
-//     *
-//     * @param lat
-//     * @param lon
-//     * @param distance
-//     * @return
-//     */
-//    public List<DeviceLocation> searchDeviceLocation(Double lat, Double lon, Integer distance) {
-//
-//
-//        //构建查询
-//
-//        SearchRequest searchRequest = new SearchRequest("gps");
-//
-//        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-//
-//        GeoDistanceQueryBuilder geoDistanceQueryBuilder = new GeoDistanceQueryBuilder("location");
-//        geoDistanceQueryBuilder.distance(distance, DistanceUnit.KILOMETERS);
-//        geoDistanceQueryBuilder.point(lat, lon);
-//
-//        searchSourceBuilder.query(geoDistanceQueryBuilder);
-//
-//        //排序
-//        GeoDistanceSortBuilder distanceSortBuilder = new GeoDistanceSortBuilder("location", lat, lon);
-//        distanceSortBuilder.unit(DistanceUnit.KILOMETERS);
-//        distanceSortBuilder.order(SortOrder.ASC);//SortOrder.ASC 升序（由近到远）；
-//        distanceSortBuilder.geoDistance(GeoDistance.ARC);//GeoDistance.ARC  精准度高，计算较慢
-//
-//        searchSourceBuilder.sort(distanceSortBuilder);
-//
-//
-//        searchSourceBuilder.from(0);
-//        searchSourceBuilder.size(200);
-//
-//        searchRequest.source(searchSourceBuilder);
-//
-//
-//        //封装结果
-//
-//        try {
-//            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-//            SearchHits hits = searchResponse.getHits();
-//            if (hits.getTotalHits().value <= 0) {
-//                return Lists.newArrayList();
-//            }
-//
-//            List<DeviceLocation> deviceLocationList = Lists.newArrayList();
-//            Arrays.stream(hits.getHits()).forEach(h -> {
-//                DeviceLocation deviceLocation = new DeviceLocation();
-//                deviceLocation.setDeviceId(h.getId());
-//                deviceLocation.setLocation(h.getSourceAsMap().get("location").toString());
-//                deviceLocationList.add(deviceLocation);
-//            });
-//            return deviceLocationList;
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return Lists.newArrayList();
-//        }
-//
-//    }
 
 
 }

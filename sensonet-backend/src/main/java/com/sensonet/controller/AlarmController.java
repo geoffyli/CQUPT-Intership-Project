@@ -1,7 +1,7 @@
 package com.sensonet.controller;
 
 
-import com.sensonet.dto.QuotaAllInfo;
+import com.sensonet.dto.QuotaWithTimeDTO;
 import com.sensonet.exception.BussinessException;
 import com.sensonet.vo.AlarmVO;
 import com.sensonet.vo.Pager;
@@ -30,18 +30,11 @@ public class AlarmController {
 
             return alarmService.save(entity);
         } catch (DuplicateKeyException e) {
-            throw new BussinessException("已存在该名称");
+            throw new BussinessException("User has already existed.");
         }
 
     }
 
-    @GetMapping
-    public Pager<AlarmEntity> queryPage(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
-                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
-                                        @RequestParam(value = "name", required = false) String name,
-                                        @RequestParam(value = "quotaId", required = false) Integer quotaId) {
-        return new Pager<>(alarmService.queryPage(page, pageSize, name, quotaId));
-    }
 
     @DeleteMapping("/{id}")
     public Boolean delete(@PathVariable Integer id) {
@@ -57,8 +50,16 @@ public class AlarmController {
 
             return alarmService.updateById(entity);
         } catch (DuplicateKeyException e) {
-            throw new BussinessException("已存在该名称");
+            throw new BussinessException("User has already existed.");
         }
+    }
+
+    @GetMapping
+    public Pager<AlarmEntity> queryAllAlarms(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
+                                             @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
+                                             @RequestParam(value = "name", required = false) String name,
+                                             @RequestParam(value = "quotaId", required = false) Integer quotaId) {
+        return new Pager<>(alarmService.queryPage(page, pageSize, name, quotaId));
     }
 
 
@@ -74,12 +75,12 @@ public class AlarmController {
      * @return The alarm log in pager
      */
     @GetMapping("/log")
-    public Pager<QuotaAllInfo> alarmLog(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
-                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
-                                        @RequestParam(value = "start", required = false) String start,
-                                        @RequestParam(value = "end", required = false) String end,
-                                        @RequestParam(value = "alarmName", required = false, defaultValue = "") String alarmName,
-                                        @RequestParam(value = "deviceId", required = false, defaultValue = "") String deviceId) {
+    public Pager<QuotaWithTimeDTO> getAlarmLog(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
+                                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
+                                               @RequestParam(value = "start", required = false) String start,
+                                               @RequestParam(value = "end", required = false) String end,
+                                               @RequestParam(value = "alarmName", required = false, defaultValue = "") String alarmName,
+                                               @RequestParam(value = "deviceId", required = false, defaultValue = "") String deviceId) {
 
         return alarmService.queryAlarmLog(page, pageSize, start, end, alarmName, deviceId);
     }

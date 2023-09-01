@@ -8,16 +8,20 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-//@CacheNamespace(implementation= MybatisRedisCache.class,eviction=MybatisRedisCache.class)
 public interface QuotaMapper extends BaseMapper<QuotaEntity>{
 
     /**
-     * 根据主题查询指标配置列表
-     * @param subject
-     * @return
+     * Select by subject
+     * @param subject The subject
+     * @return The quota list
      */
     @Select("select * from tb_quota where subject=#{subject} ")
     List<QuotaEntity> selectBySubject(String subject);
 
-
+    /**
+     * Get the number of quotas
+     * @return The number of quotas
+     */
+    @Select("select count(*) from tb_quota")
+    int getQuotaCount();
 }

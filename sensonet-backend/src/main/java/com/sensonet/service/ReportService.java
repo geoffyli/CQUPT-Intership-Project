@@ -1,10 +1,9 @@
 package com.sensonet.service;
 
-import com.sensonet.dto.HeapPoint;
-import com.sensonet.dto.TrendPoint;
+import com.sensonet.dto.HeapPointDTO;
+import com.sensonet.dto.TrendPointDTO;
 //import com.sensonet.dto.TrendPoint2;
 //import com.sensonet.vo.BoardQuotaVO;
-import com.sensonet.vo.Pager;
 import com.sensonet.vo.PieVO;
 
 import java.util.List;
@@ -23,68 +22,33 @@ public interface ReportService {
 
 
     /**
-     * 获取异常趋势指标
-     * @param start 开始时间
-     * @param end 结束时间
-     * @param type 时间统计类型（1：1小时  2：1天  3：7天  ）
-     * @return
+     * Get the alarm trend
+     * @param start the start time
+     * @param end the end time
+     * @param type 1: min, 2: hour, 3: day
+     * @return the number of alarm devices
      */
-    List<TrendPoint> getAlarmTrend(String start,String end,int type);
+    List<TrendPointDTO> getAlarmTrend(String start, String end, int type);
 
 
     /**
-     * 获取一定时间范围内的报警次数最多的设备指标
-     * @param startTime
-     * @param endTime
-     * @return
+     * Get the device that has the most alarms
+     * @param startTime the start time
+     * @param endTime the end time
+     * @return the device that has the most alarms
      */
-    List<HeapPoint> getTop10Alarm( String startTime,String endTime );
+    List<HeapPointDTO> getTop10Alarm(String startTime, String endTime );
 
+    /**
+     * Get the number of messages in the last 24 hours
+     * @return the number of messages in the last 24 hours
+     */
+    String get24HourMessages();
 
-//    /**
-//     * 通过指标获取设备列表
-//     * @param page
-//     * @param pageSize
-//     * @param quotaId
-//     * @return
-//     */
-//    Pager<String> getDeviceByQuota(Long page,Long pageSize,String quotaId);
-
-
-//    /**
-//     * 获取指标趋势
-//     * @param startTime
-//     * @param endTime
-//     * @param quotaId
-//     * @param deviceId
-//     * @param type
-//     * @return
-//     */
-//    List<TrendPoint2> getQuotaTrend( String startTime,String endTime,String quotaId,String deviceId,int type  );
-
-
-//    /**
-//     * 指标趋势图
-//     * @param quotaId
-//     * @param deviceIds
-//     * @param startTime
-//     * @param endTime
-//     * @param type
-//     * @return
-//     */
-//    BoardQuotaVO getBoardData(String quotaId,List<String> deviceIds,String startTime,String endTime,Integer type  );
-
-//
-//    /**
-//     * 获取面板数据
-//     * @param id
-//     * @param start
-//     * @param end
-//     * @param type
-//     * @return
-//     */
-//    BoardQuotaVO getBoardData(Integer id, String start, String end, Integer type);
-//
-
+    /**
+     * Get the number of quotas
+     * @return the number of quotas
+     */
+    String getQuotaNumber();
 
 }

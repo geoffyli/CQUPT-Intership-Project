@@ -11,7 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @Measurement(name = "quota")
-public class TrendPoint implements Serializable {
+public class TrendPointDTO implements Serializable {
 
     @Column(name = "time")
     private String time;//时间

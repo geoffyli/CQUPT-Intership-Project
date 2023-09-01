@@ -1,7 +1,7 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sensonet.SensonetApplication;
-import com.sensonet.dto.QuotaInfo;
-import com.sensonet.influx.InfluxRepository;
+import com.sensonet.dto.QuotaInfoDTO;
+import com.sensonet.influxdb.InfluxRepository;
 import com.sensonet.service.QuotaService;
 import com.sensonet.util.JsonUtil;
 import org.junit.Test;
@@ -28,22 +28,22 @@ public class TestInfluxDb {
     @Test
     public void testAdd(){
 
-        QuotaInfo quotaInfo=new QuotaInfo();
-        quotaInfo.setDeviceId("123456");
-        quotaInfo.setQuotaId("1");
-        quotaInfo.setQuotaName("温度");
-        quotaInfo.setReferenceValue("0-10");
-        quotaInfo.setUnit("摄氏度");
-        quotaInfo.setAlarm("1");
-        quotaInfo.setValue(11D);
-        influxRepository.add(quotaInfo);
+        QuotaInfoDTO quotaInfoDTO =new QuotaInfoDTO();
+        quotaInfoDTO.setDeviceId("123456");
+        quotaInfoDTO.setQuotaId("1");
+        quotaInfoDTO.setQuotaName("温度");
+        quotaInfoDTO.setReferenceValue("0-10");
+        quotaInfoDTO.setUnit("摄氏度");
+        quotaInfoDTO.setAlarm("1");
+        quotaInfoDTO.setValue(11D);
+        influxRepository.add(quotaInfoDTO);
 
     }
 
 
     @Test
     public void testFindLast(){
-        List<QuotaInfo> quotaList = quotaService.getLastQuotaList("10011");
+        List<QuotaInfoDTO> quotaList = quotaService.getLastQuotaList("10011");
 
         try {
             String json = JsonUtil.serialize(quotaList);

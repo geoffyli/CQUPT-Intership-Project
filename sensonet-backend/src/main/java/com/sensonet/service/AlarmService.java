@@ -3,7 +3,7 @@ package com.sensonet.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sensonet.dto.DeviceInfoDTO;
-import com.sensonet.dto.QuotaAllInfo;
+import com.sensonet.dto.QuotaWithTimeDTO;
 import com.sensonet.dto.QuotaDTO;
 import com.sensonet.mapper.entity.AlarmEntity;
 import com.sensonet.vo.Pager;
@@ -46,6 +46,6 @@ public interface AlarmService extends IService<AlarmEntity>{
      * @param deviceId The device id
      * @return The alarm log in pager
      */
-    Pager<QuotaAllInfo> queryAlarmLog( Long page,Long pageSize,String start,String end,String alarmName,String deviceId );
+    Pager<QuotaWithTimeDTO> queryAlarmLog(Long page, Long pageSize, String start, String end, String alarmName, String deviceId );
 
 }

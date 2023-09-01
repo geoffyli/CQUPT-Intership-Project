@@ -2,7 +2,7 @@ package com.sensonet.service.impl;
 
 import com.google.common.collect.Lists;
 import com.sensonet.dto.DeviceDTO;
-import com.sensonet.dto.QuotaInfo;
+import com.sensonet.dto.QuotaInfoDTO;
 import com.sensonet.es.ESRepository;
 import com.sensonet.service.DeviceService;
 import com.sensonet.service.QuotaService;
@@ -107,7 +107,7 @@ public class DeviceServiceImpl implements DeviceService {
             DeviceQuotaVO deviceQuotaVO = new DeviceQuotaVO();
             BeanUtils.copyProperties(deviceDTO, deviceQuotaVO);
             // Query the latest quota of each device from influxdb
-            List<QuotaInfo> quotaList = quotaService.getLastQuotaList(deviceDTO.getDeviceId());
+            List<QuotaInfoDTO> quotaList = quotaService.getLastQuotaList(deviceDTO.getDeviceId());
             deviceQuotaVO.setQuotaList(quotaList);
             deviceQuotaVOList.add(deviceQuotaVO);
         });

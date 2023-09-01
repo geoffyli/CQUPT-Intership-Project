@@ -9,7 +9,7 @@ import org.influxdb.annotation.Measurement;
  */
 @Data
 @Measurement(name = "quota")
-public class QuotaInfo {
+public class QuotaInfoDTO {
 
     @Column(name = "deviceId", tag = true)
     private String deviceId; // The device ID

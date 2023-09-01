@@ -10,9 +10,9 @@ import com.google.common.collect.Lists;
 import com.sensonet.dto.DeviceDTO;
 import com.sensonet.dto.DeviceInfoDTO;
 import com.sensonet.dto.QuotaDTO;
-import com.sensonet.dto.QuotaInfo;
+import com.sensonet.dto.QuotaInfoDTO;
 import com.sensonet.mapper.entity.QuotaEntity;
-import com.sensonet.influx.InfluxRepository;
+import com.sensonet.influxdb.InfluxRepository;
 import com.sensonet.mapper.QuotaMapper;
 import com.sensonet.service.QuotaService;
 import lombok.extern.slf4j.Slf4j;
@@ -131,20 +131,20 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
         // Transform the quotaDTO to quotaInfo
         for (QuotaDTO quotaDTO : quotaDTOList) {
             // Create the quotaInfo and copy the quotaDTO info
-            QuotaInfo quotaInfo = new QuotaInfo();
-            BeanUtils.copyProperties(quotaDTO, quotaInfo);
-            quotaInfo.setQuotaId(quotaDTO.getId() + "");
+            QuotaInfoDTO quotaInfoDTO = new QuotaInfoDTO();
+            BeanUtils.copyProperties(quotaDTO, quotaInfoDTO);
+            quotaInfoDTO.setQuotaId(quotaDTO.getId() + "");
             // Save the quotaInfo to influx
-            influxRepository.add(quotaInfo);
+            influxRepository.add(quotaInfoDTO);
         }
 
     }
 
     @Override
-    public List<QuotaInfo> getLastQuotaList(String deviceId) {
+    public List<QuotaInfoDTO> getLastQuotaList(String deviceId) {
 
         String ql = "select last(value),* from quota where deviceId='" + deviceId + "' group by quotaId";
-        return influxRepository.query(ql, QuotaInfo.class);
+        return influxRepository.query(ql, QuotaInfoDTO.class);
     }
 
 //    @Override

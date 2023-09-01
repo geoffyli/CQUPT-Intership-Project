@@ -9,7 +9,7 @@ import org.influxdb.annotation.Measurement;
  */
 @Data
 @Measurement(name = "quota")
-public class QuotaAllInfo extends QuotaInfo{
+public class QuotaWithTimeDTO extends QuotaInfoDTO {
 
     @Column(name = "time")
     private String time;

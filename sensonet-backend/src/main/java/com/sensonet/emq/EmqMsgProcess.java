@@ -34,11 +34,6 @@ public class EmqMsgProcess implements MqttCallback {
     @Autowired
     private DeviceService deviceService;
 
-    @Autowired
-    private ESRepository esRepository;
-
-//    @Autowired
-//    private NoticeService noticeService;
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         // Message received
@@ -61,22 +56,7 @@ public class EmqMsgProcess implements MqttCallback {
 
             // Save the device quota information to InfluxDB
             quotaService.saveQuotaToInflux(deviceInfoDTO.getQuotaList());
-//
-//            //指标透传
-//            noticeService.quotaTransfer(deviceInfoDTO.getQuotaList());
-
         }
-//
-//
-//        //解析gps
-//        DeviceLocation deviceLocation = gpsService.analysis(topic, payloadMap);
-//        if (deviceLocation != null) {
-//            System.out.println("gps解析结果：" + JsonUtil.serialize(deviceLocation));
-//            esRepository.saveLocation(deviceLocation);
-//            noticeService.gpsTransfer(deviceLocation);
-//        }
-
-
     }
 
     @Override

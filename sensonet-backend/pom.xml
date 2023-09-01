@@ -32,12 +32,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.sensonet</groupId>
-            <artifactId>sensonet-common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>

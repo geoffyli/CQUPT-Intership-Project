@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import com.sensonet.dto.DeviceInfoDTO;
 import com.sensonet.dto.QuotaDTO;
-import com.sensonet.dto.QuotaInfo;
+import com.sensonet.dto.QuotaInfoDTO;
 import com.sensonet.mapper.entity.QuotaEntity;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public interface QuotaService extends IService<QuotaEntity>{
      * @param deviceId The device id
      * @return The last quota list
      */
-    List<QuotaInfo> getLastQuotaList(String deviceId);
+    List<QuotaInfoDTO> getLastQuotaList(String deviceId);
 
 
 //    /**

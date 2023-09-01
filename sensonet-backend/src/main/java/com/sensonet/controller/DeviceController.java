@@ -57,16 +57,14 @@ public class DeviceController {
      * @return Device list
      */
     @GetMapping
-    public Pager<DeviceDTO> findPage(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
-                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
-                                     @RequestParam(value = "sn", required = false) String sn,
-                                     @RequestParam(value = "tag", required = false) String tag) {
+    public Pager<DeviceDTO> queryDevices(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
+                                         @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
+                                         @RequestParam(value = "sn", required = false) String sn,
+                                         @RequestParam(value = "tag", required = false) String tag) {
 
         return deviceService.queryPage(page, pageSize, sn, tag, null);
     }
 
-//    @Autowired
-//    private NoticeService noticeService;
 
     /**
      * Get disconnected device information
@@ -74,17 +72,15 @@ public class DeviceController {
      * @param param data from EMQX
      */
     @PostMapping("/clientAction")
-    public void clientAction(@RequestBody Map<String, String> param) {
+    public void sendClientNotification(@RequestBody Map<String, String> param) {
         System.out.println(param);
         // Get client id.
         String deviceId = param.get("clientid");
-        if (param.get("action").equals("client_connected")) { //如果是联网
+        if (param.get("action").equals("client_connected")) {
             deviceService.updateOnLine(deviceId, true);
-//            noticeService.onlineTransfer(deviceId, true);//联网通知
         }
-        if (param.get("action").equals("client_disconnected")) { //如果是断网
+        if (param.get("action").equals("client_disconnected")) {
             deviceService.updateOnLine(deviceId, false);
-//            noticeService.onlineTransfer(deviceId, false);//断网通知
         }
     }
 
@@ -100,11 +96,11 @@ public class DeviceController {
      * @return The device quota data
      */
     @GetMapping("/deviceQuota")
-    public Pager<DeviceQuotaVO> queryQuotaData(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
-                                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
-                                               @RequestParam(value = "deviceId", required = false) String deviceId,
-                                               @RequestParam(value = "tag", required = false) String tag,
-                                               @RequestParam(value = "state", required = false) Integer state) {
+    public Pager<DeviceQuotaVO> queryDeviceQuota(@RequestParam(value = "page", required = false, defaultValue = "1") Long page,
+                                                 @RequestParam(value = "pageSize", required = false, defaultValue = "10") Long pageSize,
+                                                 @RequestParam(value = "deviceId", required = false) String deviceId,
+                                                 @RequestParam(value = "tag", required = false) String tag,
+                                                 @RequestParam(value = "state", required = false) Integer state) {
 
 
         return deviceService.queryDeviceQuota(page, pageSize, deviceId, tag, state);

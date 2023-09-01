@@ -1,4 +1,4 @@
-package com.sensonet.influx;
+package com.sensonet.influxdb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.influxdb.InfluxDB;
@@ -63,6 +63,27 @@ public class InfluxRepository {
         // Create a result mapper and then return the list of the object to be returned.
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         return resultMapper.toPOJO(queryResult, clazz);
+    }
+
+    public String queryNum(String ql) {
+        // Execute the query and get the result.
+        QueryResult queryResult = influxDB.query(new Query(ql, dbName));
+        // Close the connection.
+        influxDB.close();
+
+        List<QueryResult.Result> results = queryResult.getResults();
+        if(results != null && !results.isEmpty()) {
+            List<QueryResult.Series> series = results.get(0).getSeries();
+            if(series != null && !series.isEmpty()) {
+                List<List<Object>> values = series.get(0).getValues();
+                if(values != null && !values.isEmpty()) {
+                    Object count = values.get(0).get(1); // This retrieves the count value in the first row.
+                    return count.toString();
+                }
+            }
+        }
+
+        return "0";
     }
 
 

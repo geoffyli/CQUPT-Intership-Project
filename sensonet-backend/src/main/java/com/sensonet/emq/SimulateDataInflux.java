@@ -27,7 +27,7 @@ public class SimulateDataInflux {
     public void addData() {
         System.out.println("Simulate data at " + LocalDateTime.now());
 
-        List<QuotaEntity> quotaList = quotaService.list();  //获取所有指标定义
+        List<QuotaEntity> quotaList = quotaService.list();  // Get all quota definitions
         // Simulate 10 devices
         for (int i = 0; i < 10; i++) {
             String deviceId = 10010 + i + ""; // Generate device ID

@@ -1,6 +1,6 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sensonet.SensonetApplication;
-import com.sensonet.dto.TrendPoint;
+import com.sensonet.dto.TrendPointDTO;
 import com.sensonet.service.ReportService;
 import com.sensonet.util.JsonUtil;
 import org.junit.Test;
@@ -22,11 +22,11 @@ public class TestReport {
     @Test
     public void testAlarmTrend(){
 
-        List<TrendPoint> trendPointList = reportService.getAlarmTrend("2023-08-01", "2023-08-07", 3);
+        List<TrendPointDTO> trendPointDTOList = reportService.getAlarmTrend("2023-08-01", "2023-08-07", 3);
 
-        for(TrendPoint trendPoint:trendPointList){
+        for(TrendPointDTO trendPointDTO : trendPointDTOList){
             try {
-                System.out.println(JsonUtil.serialize(trendPoint));
+                System.out.println(JsonUtil.serialize(trendPointDTO));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

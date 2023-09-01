@@ -9,7 +9,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sensonet.dto.*;
 import com.sensonet.mapper.entity.AlarmEntity;
-import com.sensonet.influx.InfluxRepository;
+import com.sensonet.influxdb.InfluxRepository;
 import com.sensonet.mapper.AlarmMapper;
 import com.sensonet.service.AlarmService;
 import com.sensonet.vo.Pager;
@@ -144,7 +144,7 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
     private InfluxRepository influxRepository;
 
     @Override
-    public Pager<QuotaAllInfo> queryAlarmLog(Long page, Long pageSize, String start, String end, String
+    public Pager<QuotaWithTimeDTO> queryAlarmLog(Long page, Long pageSize, String start, String end, String
             alarmName, String deviceId) {
         /*
         Construct "where" clause
@@ -181,12 +181,12 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
         /*
         Execute query language
          */
-        List<QuotaAllInfo> quotaList = influxRepository.query(listQl.toString(), QuotaAllInfo.class);
+        List<QuotaWithTimeDTO> quotaList = influxRepository.query(listQl.toString(), QuotaWithTimeDTO.class);
 
         /*
         Convert time format
          */
-        for (QuotaAllInfo quotaAllInfo : quotaList) {
+        for (QuotaWithTimeDTO quotaAllInfo : quotaList) {
             //2020-09-19T09:58:34.926Z   DateTimeFormatter.ISO_OFFSET_DATE_TIME
             //2020-09-19 09:58:34
             LocalDateTime dateTime = LocalDateTime.parse(quotaAllInfo.getTime(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
@@ -197,22 +197,22 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
         /*
         Execute count query language
          */
-        List<QuotaCount> quotaCount = influxRepository.query(countQl.toString(), QuotaCount.class);
+        List<QuotaCountDTO> quotaCountDTO = influxRepository.query(countQl.toString(), QuotaCountDTO.class);
 
         /*
         Return the result
          */
-        if (quotaCount == null || quotaCount.size() == 0) {
+        if (quotaCountDTO == null || quotaCountDTO.size() == 0) {
             // Set an empty pager
-            Pager<QuotaAllInfo> pager = new Pager<QuotaAllInfo>(0L, 0L);
+            Pager<QuotaWithTimeDTO> pager = new Pager<QuotaWithTimeDTO>(0L, 0L);
             pager.setPage(0);
             pager.setItems(Lists.newArrayList());
             return pager;
         }
 
-        Long totalCount = quotaCount.get(0).getCount(); // Get the total count
+        Long totalCount = quotaCountDTO.get(0).getCount(); // Get the total count
         // Construct the pager
-        Pager<QuotaAllInfo> pager = new Pager<>(totalCount, pageSize);
+        Pager<QuotaWithTimeDTO> pager = new Pager<>(totalCount, pageSize);
         pager.setPage(page);
         pager.setItems(quotaList);
 

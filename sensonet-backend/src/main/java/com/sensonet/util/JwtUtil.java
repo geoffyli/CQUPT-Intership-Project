@@ -17,7 +17,6 @@ import java.util.*;
  */
 @Slf4j
 public class JwtUtil {
-    //设置秘钥明文
     public static final String JWT_KEY = "123456";
 
     public static final long JWT_EXPIRED_KEY = 30 * 60 * 1000L; // Half an hour
@@ -59,17 +58,6 @@ public class JwtUtil {
         return new SecretKeySpec(encode, 0, encode.length, "AES");
     }
 
-
-//    /**
-//     * 生成加密后的秘钥 secretKey
-//     *
-//     * @return
-//     */
-//    public static SecretKey generalKey() {
-//        byte[] encodedKey = Base64.getDecoder().decode(JwtUtil.JWT_KEY);
-//        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-//        return key;
-//    }
 
     /**
      * Parse the JWT token

@@ -9,52 +9,40 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 
-public class JsonUtil{
+public class JsonUtil {
     /**
-     * 反序列化
-     * @param json
-     * @param clazz
-     * @param <T>
-     * @return
+     * Turn a json string into an object
+     *
+     * @param json  json string
+     * @param clazz object class
+     * @param <T>   object type
+     * @return object
      * @throws IOException
      */
     public static <T> T getByJson(String json, Class<T> clazz) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        // 在反序列化时忽略在 json 中存在但 Java 对象不存在的属性
+        // Ignore unknown properties
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        // 在序列化时日期格式默认为 yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        // Set the time format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        //反序列化"2020-01-22T11:11:11"字符串为LocalDateTime格式的配置
+        // Deserialize "2020-01-22T11:11:11" string to LocalDateTime format
         mapper.registerModule(new JavaTimeModule());
 
         return mapper.readValue(json, clazz);
     }
 
     /**
-     * 从json字符串中根据nodeName获取值
-     * @param nodeName
-     * @param json
-     * @return
-     * @throws IOException
-     */
-    public static String getValueByNodeName(String nodeName, String json) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(json);
-
-        return jsonNode.findPath(nodeName).asText();
-    }
-
-    /**
      * Turn an object into a json string
+     *
      * @param object
      * @return
      * @throws JsonProcessingException
      */
     public static String serialize(Object object) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        // 在序列化时日期格式默认为 yyyy-MM-dd'T'HH:mm:ss.SSSZ
+        // The time format: yyyy-MM-dd'T'HH:mm:ss.SSSZ
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        //反序列化"2020-01-22T11:11:11"字符串为LocalDateTime格式的配置
+        // Serialize LocalDateTime format to "2020-01-22T11:11:11" string
         mapper.registerModule(new JavaTimeModule());
 
         return mapper.writeValueAsString(object);

@@ -6,7 +6,7 @@ import org.influxdb.annotation.Measurement;
 
 @Data
 @Measurement(name = "quota")
-public class HeapPoint {
+public class HeapPointDTO {
 
     @Column(name = "deviceId")
     private String deviceId;

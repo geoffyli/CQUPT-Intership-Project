@@ -42,6 +42,15 @@ public class EmqClient {
         }
     }
 
+    /**
+     * Subscribe to a topic
+     *
+     * @param topicName the topic to subscribe to
+     * @throws MqttException if there is an error subscribing to the topic
+     */
+    public void subscribe(String topicName) throws MqttException {
+        mqttClient.subscribe(topicName);
+    }
 
     /**
      * Publish a message to the MQTT server
@@ -57,18 +66,8 @@ public class EmqClient {
             mqttClient.getTopic(topic).publish(mqttMessage);
         } catch (MqttException e) {
             e.printStackTrace();
-            log.error("发送消息异常");
+            log.error("Publish message failed!");
         }
     }
 
-
-    /**
-     * Subscribe to a topic
-     *
-     * @param topicName the topic to subscribe to
-     * @throws MqttException if there is an error subscribing to the topic
-     */
-    public void subscribe(String topicName) throws MqttException {
-        mqttClient.subscribe(topicName);
-    }
 }

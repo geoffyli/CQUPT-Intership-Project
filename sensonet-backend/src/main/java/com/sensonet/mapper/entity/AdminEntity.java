@@ -9,11 +9,9 @@ import java.io.Serializable;
 
 @TableName(value = "tb_admin")
 @Data
-public class AdminEntity implements Serializable{
-    @TableId(value = "id",type = IdType.AUTO)
+public class AdminEntity implements Serializable {
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
     private String adminName;
     private String password;
-//    private Boolean type;
-//    private String board;
 }
