@@ -1,8 +1,7 @@
 package com.sensonet.emq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sensonet.dto.DeviceInfoDTO;
-import com.sensonet.es.ESRepository;
+import com.sensonet.dto.PayloadAnalysisResultDTO;
 import com.sensonet.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -19,7 +18,7 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class EmqMsgProcess implements MqttCallback {
+public class EmqMsgCallback implements MqttCallback {
 
     @Autowired
     private EmqClient emqClient;
@@ -34,6 +33,12 @@ public class EmqMsgProcess implements MqttCallback {
     @Autowired
     private DeviceService deviceService;
 
+    /**
+     * This method is called when a message arrives from the MQTT server.
+     * @param topic The topic the message was published to
+     * @param mqttMessage The message
+     * @throws Exception Exception
+     */
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         // Message received
@@ -47,15 +52,14 @@ public class EmqMsgProcess implements MqttCallback {
         Map payloadMap = mapper.readValue(payload, Map.class);
 
         // Parse the payload
-        DeviceInfoDTO deviceInfoDTO = quotaService.analysis(topic, payloadMap);
-        if (deviceInfoDTO != null) {
+        PayloadAnalysisResultDTO payloadAnalysisResultDTO = quotaService.analysis(topic, payloadMap);
+        if (payloadAnalysisResultDTO != null) {
             // Verify and set the device alarm information
-            deviceInfoDTO = alarmService.verifyDeviceInfo(deviceInfoDTO);
-            // Save the device information
-            deviceService.saveDeviceInfo(deviceInfoDTO.getDevice());
-
-            // Save the device quota information to InfluxDB
-            quotaService.saveQuotaToInflux(deviceInfoDTO.getQuotaList());
+            payloadAnalysisResultDTO = alarmService.analyzeAlarmInfo(payloadAnalysisResultDTO);
+            // Save the device information to ES
+            deviceService.saveAndUpdateDevice(payloadAnalysisResultDTO.getDevice());
+            // Save the quota with alarm record information to InfluxDB
+            quotaService.saveQuotaToInflux(payloadAnalysisResultDTO.getQuotaWithAlarmRecordList());
         }
     }
 

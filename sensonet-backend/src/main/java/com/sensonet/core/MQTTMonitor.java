@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 
 /**
  * This class is used to monitor the MQTT server.
+ * It subscribes to the topics and processes the messages.
+ * It's executed after the bean is constructed.
  */
 @Component
 @Slf4j

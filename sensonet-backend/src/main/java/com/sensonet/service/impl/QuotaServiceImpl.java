@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sensonet.dto.DeviceDTO;
-import com.sensonet.dto.DeviceInfoDTO;
-import com.sensonet.dto.QuotaDTO;
+import com.sensonet.dto.PayloadAnalysisResultDTO;
+import com.sensonet.dto.QuotaWithAlarmRecordDTO;
 import com.sensonet.dto.QuotaInfoDTO;
 import com.sensonet.mapper.entity.QuotaEntity;
 import com.sensonet.influxdb.InfluxRepository;
@@ -54,40 +54,43 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
 
     /**
      * For one payload, we
-     * @param topic 主题
-     * @param payloadMap 报文
-     * @return
+     * @param topic the MQTT topic
+     * @param payloadMap the payload map from the msg
+     * @return the device info
      */
     @Override
-    public DeviceInfoDTO analysis(String topic, Map<String, Object> payloadMap) {
+    public PayloadAnalysisResultDTO analysis(String topic, Map<String, Object> payloadMap) {
         /*
         1. Get the quota configuration from mysql by topic.
-        2. Encapsulate device information.
-        3. Encapsulate quota list
-        4. Encapsulate device information and quota list
+        2. Encapsulate device information to DeviceInfoDTO.
+        3. Encapsulate quota list to DeviceInfoDTO.
+        4. Encapsulate device information and quota list.
          */
+        PayloadAnalysisResultDTO payloadAnalysisResultDTO = new PayloadAnalysisResultDTO();
+
         // 1. Get the quota configuration from mysql by topic.
         List<QuotaEntity> quotaList = baseMapper.selectBySubject(topic);
-        if (quotaList.size() == 0) return null;
+        if (quotaList.size() == 0) return null; // If there's no quota matched, stop analysis
 
         // 2. Encapsulate device information. (Get the device id)
         String snKey = quotaList.get(0).getSnKey(); // Get the filed name of the device id
         if (Strings.isNullOrEmpty(snKey)) return null;
-        String deviceId = (String) payloadMap.get(snKey); // Get the device id
+        System.out.println("id: " + payloadMap.get(snKey));
+        String deviceId = payloadMap.get(snKey).toString(); // Get the device id from the payload
         if (Strings.isNullOrEmpty(deviceId)) return null;
         DeviceDTO deviceDTO = new DeviceDTO();
-        deviceDTO.setDeviceId(deviceId);
+        deviceDTO.setDeviceId(deviceId); // Encapsulate the device id
 
         // 3. Encapsulate quota list
-        List<QuotaDTO> quotaDTOList = Lists.newArrayList();
+        List<QuotaWithAlarmRecordDTO> quotaWithAlarmRecordDTOList = Lists.newArrayList();
         for (QuotaEntity quota : quotaList) {
-            String quotaKey = quota.getValueKey(); // the filed name in payload that is related to the quota
-            // If the payload contains the filed that satisfies the quota
+            String quotaKey = quota.getValueKey(); // Get the filed name for quota in payload
+            // If the payload contains the filed for the quota
             if (payloadMap.containsKey(quotaKey)) {
-                // Create the quota, and copy the quota info from mysql
-                QuotaDTO quotaDTO = new QuotaDTO();
-                BeanUtils.copyProperties(quota, quotaDTO);
-                quotaDTO.setQuotaName(quota.getName());
+                // Create the quota dto, and copy the quota info from mysql
+                QuotaWithAlarmRecordDTO quotaWithAlarmRecordDTO = new QuotaWithAlarmRecordDTO();
+                BeanUtils.copyProperties(quota, quotaWithAlarmRecordDTO);
+                quotaWithAlarmRecordDTO.setQuotaName(quota.getName());
 
                 /*
                  Set the quotaDTO value and stringValue (from payload info)
@@ -95,45 +98,43 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
                     1.Number      value: content  stringValue: number str
                     2.Non-number  value: 0        stringValue: content
                  */
-                if ("String".equals(quotaDTO.getValueType()) || "Boolean".equals(quotaDTO.getValueType())) {
+                if ("String".equals(quotaWithAlarmRecordDTO.getValueType()) || "Boolean".equals(quotaWithAlarmRecordDTO.getValueType())) {
                     // If the quota is not a number
-                    quotaDTO.setStringValue((String) payloadMap.get(quotaKey));
-                    quotaDTO.setValue(0d);
+                    quotaWithAlarmRecordDTO.setStringValue((String) payloadMap.get(quotaKey));
+                    quotaWithAlarmRecordDTO.setValue(0d);
                 } else {
                     // If the quota is a number
                     // There are 2 types of number: 1.String 2.Number
                     if (payloadMap.get(quotaKey) instanceof String) {
                         // If the number is a string
-                        quotaDTO.setValue(Double.valueOf((String) payloadMap.get(quotaKey)));
-                        quotaDTO.setStringValue((String) payloadMap.get(quotaKey));
+                        quotaWithAlarmRecordDTO.setValue(Double.valueOf((String) payloadMap.get(quotaKey)));
+                        quotaWithAlarmRecordDTO.setStringValue((String) payloadMap.get(quotaKey));
                     } else {
                         // If the number is a number
-                        quotaDTO.setValue(Double.valueOf(payloadMap.get(quotaKey) + ""));
-                        quotaDTO.setStringValue(quotaDTO.getValue() + "");
+                        quotaWithAlarmRecordDTO.setValue(Double.valueOf(payloadMap.get(quotaKey) + ""));
+                        quotaWithAlarmRecordDTO.setStringValue(quotaWithAlarmRecordDTO.getValue() + "");
                     }
-                    quotaDTO.setDeviceId(deviceId);
 
                 }
-                quotaDTOList.add(quotaDTO);
+                quotaWithAlarmRecordDTO.setDeviceId(deviceId);
+                quotaWithAlarmRecordDTOList.add(quotaWithAlarmRecordDTO);
             }
         }
 
         // 4. Encapsulate device information and quota list
-        DeviceInfoDTO deviceInfoDTO = new DeviceInfoDTO();
-        deviceInfoDTO.setDevice(deviceDTO);
-        deviceInfoDTO.setQuotaList(quotaDTOList);
-
-        return deviceInfoDTO;
+        payloadAnalysisResultDTO.setDevice(deviceDTO);
+        payloadAnalysisResultDTO.setQuotaWithAlarmRecordList(quotaWithAlarmRecordDTOList);
+        return payloadAnalysisResultDTO;
     }
 
     @Override
-    public void saveQuotaToInflux(List<QuotaDTO> quotaDTOList) {
+    public void saveQuotaToInflux(List<QuotaWithAlarmRecordDTO> quotaWithAlarmRecordDTOList) {
         // Transform the quotaDTO to quotaInfo
-        for (QuotaDTO quotaDTO : quotaDTOList) {
+        for (QuotaWithAlarmRecordDTO quotaWithAlarmRecordDTO : quotaWithAlarmRecordDTOList) {
             // Create the quotaInfo and copy the quotaDTO info
             QuotaInfoDTO quotaInfoDTO = new QuotaInfoDTO();
-            BeanUtils.copyProperties(quotaDTO, quotaInfoDTO);
-            quotaInfoDTO.setQuotaId(quotaDTO.getId() + "");
+            BeanUtils.copyProperties(quotaWithAlarmRecordDTO, quotaInfoDTO);
+            quotaInfoDTO.setQuotaId(quotaWithAlarmRecordDTO.getId() + "");
             // Save the quotaInfo to influx
             influxRepository.add(quotaInfoDTO);
         }

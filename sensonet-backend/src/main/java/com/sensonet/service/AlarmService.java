@@ -2,9 +2,9 @@ package com.sensonet.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.sensonet.dto.DeviceInfoDTO;
+import com.sensonet.dto.PayloadAnalysisResultDTO;
 import com.sensonet.dto.QuotaWithTimeDTO;
-import com.sensonet.dto.QuotaDTO;
+import com.sensonet.dto.QuotaWithAlarmRecordDTO;
 import com.sensonet.mapper.entity.AlarmEntity;
 import com.sensonet.vo.Pager;
 
@@ -22,18 +22,18 @@ public interface AlarmService extends IService<AlarmEntity>{
 
     /**
      * View the alarm information of a device
-     * @param quotaDTO QuotaDTO
+     * @param quotaWithAlarmRecordDTO QuotaDTO
      * @return AlarmEntity object or null if no alarm is triggered
      */
-    AlarmEntity verifyQuota(QuotaDTO quotaDTO);
+    AlarmEntity setAlarmLevelByQuota(QuotaWithAlarmRecordDTO quotaWithAlarmRecordDTO);
 
 
     /**
      * Encapsulate the alarm information of a device
-     * @param deviceInfoDTO DeviceInfoDTO
+     * @param payloadAnalysisResultDTO DeviceInfoDTO
      * @return DeviceInfoDTO object
      */
-    DeviceInfoDTO verifyDeviceInfo(DeviceInfoDTO deviceInfoDTO);
+    PayloadAnalysisResultDTO analyzeAlarmInfo(PayloadAnalysisResultDTO payloadAnalysisResultDTO);
 
 
     /**

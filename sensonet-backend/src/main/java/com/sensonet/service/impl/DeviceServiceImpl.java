@@ -50,7 +50,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public boolean saveDeviceInfo(DeviceDTO deviceDTO) {
+    public boolean saveAndUpdateDevice(DeviceDTO deviceDTO) {
         /*
         1. Query the device
         2. Determine whether the device is online
@@ -58,7 +58,7 @@ public class DeviceServiceImpl implements DeviceService {
          */
         // Query the device
         DeviceDTO device = findDevice(deviceDTO.getDeviceId());
-        if (device != null && !device.getStatus()) return false;
+        if (device != null && !device.getStatus()) return false; // If the device is offline, do not process
 
         if (device == null) {
             // If the device doesn't exist, add it
@@ -67,7 +67,6 @@ public class DeviceServiceImpl implements DeviceService {
             // If the device exists, update it
             esRepository.updateDevicesAlarm(deviceDTO);
         }
-//        refreshDevice(deviceDTO);
         return true;
     }
 

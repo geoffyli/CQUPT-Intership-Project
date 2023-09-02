@@ -45,7 +45,7 @@ public interface DeviceService {
      * @param deviceDTO
      * @return
      */
-    boolean saveDeviceInfo(DeviceDTO deviceDTO);
+    boolean saveAndUpdateDevice(DeviceDTO deviceDTO);
 
 
     /**

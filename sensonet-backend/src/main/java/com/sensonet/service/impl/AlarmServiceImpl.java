@@ -63,34 +63,34 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
     }
 
     @Override
-    public AlarmEntity verifyQuota(QuotaDTO quotaDTO) {
+    public AlarmEntity setAlarmLevelByQuota(QuotaWithAlarmRecordDTO quotaWithAlarmRecordDTO) {
         /*
         1. Get alarm rules list by quota id
         2. Traverse the alarm rules list
 
          */
         // 1. Get alarm rules list by quota id
-        List<AlarmEntity> alarmEntityList = getByQuotaId(quotaDTO.getId());
+        List<AlarmEntity> alarmEntityList = getByQuotaId(quotaWithAlarmRecordDTO.getId());
         AlarmEntity alarm = null;
         // 2. Traverse the alarm rules list
         for (AlarmEntity alarmEntity : alarmEntityList) {
             // If the quota value type is string or boolean
-            if ("String".equals(quotaDTO.getValueType()) || "Boolean".equals(quotaDTO.getValueType())) {
+            if ("String".equals(quotaWithAlarmRecordDTO.getValueType()) || "Boolean".equals(quotaWithAlarmRecordDTO.getValueType())) {
                 if (alarmEntity.getOperator().equals("=")) {
-                    if (alarmEntity.getThreshold().toString().equals(quotaDTO.getStringValue())) {
+                    if (alarmEntity.getThreshold().equals(quotaWithAlarmRecordDTO.getStringValue())) {
                         alarm = alarmEntity;
                         break;
                     }
                 }
             } else // If the quota value type is number
             {
-                if (alarmEntity.getOperator().equals(">") && quotaDTO.getValue() > alarmEntity.getThreshold()) {
+                if (alarmEntity.getOperator().equals(">") && quotaWithAlarmRecordDTO.getValue() > Double.parseDouble(alarmEntity.getThreshold())) {
                     alarm = alarmEntity;
                     break;
-                } else if (alarmEntity.getOperator().equals("<") && quotaDTO.getValue() < alarmEntity.getThreshold()) {
+                } else if (alarmEntity.getOperator().equals("<") && quotaWithAlarmRecordDTO.getValue() < Double.parseDouble(alarmEntity.getThreshold())) {
                     alarm = alarmEntity;
                     break;
-                } else if (alarmEntity.getOperator().equals("=") && quotaDTO.getValue().intValue() == alarmEntity.getThreshold()) {
+                } else if (alarmEntity.getOperator().equals("=") && quotaWithAlarmRecordDTO.getValue().intValue() == Double.parseDouble(alarmEntity.getThreshold())) {
                     alarm = alarmEntity;
                     break;
                 }
@@ -101,9 +101,9 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
     }
 
     @Override
-    public DeviceInfoDTO verifyDeviceInfo(DeviceInfoDTO deviceInfoDTO) {
+    public PayloadAnalysisResultDTO analyzeAlarmInfo(PayloadAnalysisResultDTO payloadAnalysisResultDTO) {
         // Get the device
-        DeviceDTO deviceDTO = deviceInfoDTO.getDevice();
+        DeviceDTO deviceDTO = payloadAnalysisResultDTO.getDevice();
         // Suppose the device is normal
         deviceDTO.setLevel(0);
         deviceDTO.setAlarm(false);
@@ -111,33 +111,31 @@ public class AlarmServiceImpl extends ServiceImpl<AlarmMapper, AlarmEntity> impl
         deviceDTO.setStatus(true);
         deviceDTO.setOnline(true);
         // Traverse the quota list
-        for (QuotaDTO quotaDTO : deviceInfoDTO.getQuotaList()) {
-            AlarmEntity alarmEntity = verifyQuota(quotaDTO); // Verify the quota
+        for (QuotaWithAlarmRecordDTO quotaWithAlarmRecordDTO : payloadAnalysisResultDTO.getQuotaWithAlarmRecordList()) {
+            AlarmEntity alarmEntity = setAlarmLevelByQuota(quotaWithAlarmRecordDTO); // Verify the quota
             if (alarmEntity != null) {
                 // If the quota is in the alarm, set the quota alarm information
-                quotaDTO.setAlarm("1"); // In alarm
-                quotaDTO.setAlarmName(alarmEntity.getName()); // Set the alarm name
-                quotaDTO.setLevel(alarmEntity.getLevel() + ""); // Set the alarm level
-                quotaDTO.setAlarmWebHook(alarmEntity.getWebHook()); // Set the alarm webhook
-                quotaDTO.setCycle(alarmEntity.getCycle()); // Set the alarm cycle
+                quotaWithAlarmRecordDTO.setAlarm("1"); // In alarm
+                quotaWithAlarmRecordDTO.setAlarmName(alarmEntity.getName()); // Set the alarm name
+                quotaWithAlarmRecordDTO.setLevel(alarmEntity.getLevel() + ""); // Set the alarm level
+                quotaWithAlarmRecordDTO.setAlarmWebHook(alarmEntity.getWebHook()); // Set the alarm webhook
+                quotaWithAlarmRecordDTO.setCycle(alarmEntity.getCycle()); // Set the alarm cycle
 
                 if (alarmEntity.getLevel() > deviceDTO.getLevel()) {
-
                     deviceDTO.setLevel(alarmEntity.getLevel());
                     deviceDTO.setAlarm(true);
                     deviceDTO.setAlarmName(alarmEntity.getName());
                 }
-
             } else {
                 // If the quota is not in the alarm, set the quota alarm information
-                quotaDTO.setAlarm("0");
-                quotaDTO.setAlarmName("Normal");
-                quotaDTO.setLevel("0");
-                quotaDTO.setAlarmWebHook("");
-                quotaDTO.setCycle(0);
+                quotaWithAlarmRecordDTO.setAlarm("0");
+                quotaWithAlarmRecordDTO.setAlarmName("Normal");
+                quotaWithAlarmRecordDTO.setLevel("0");
+                quotaWithAlarmRecordDTO.setAlarmWebHook("");
+                quotaWithAlarmRecordDTO.setCycle(0);
             }
         }
-        return deviceInfoDTO;
+        return payloadAnalysisResultDTO;
     }
 
     @Autowired

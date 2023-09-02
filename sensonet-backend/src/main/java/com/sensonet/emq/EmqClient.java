@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * This class is used to connect to the MQTT server and subscribe to the topics.
+ * This project is an emqx client.
+ */
 @Component
 @Slf4j
 public class EmqClient {
@@ -21,7 +25,7 @@ public class EmqClient {
 
 
     @Autowired
-    private EmqMsgProcess emqMsgProcessor;
+    private EmqMsgCallback emqMsgProcessor;
 
     /**
      * Connect to the MQTT server

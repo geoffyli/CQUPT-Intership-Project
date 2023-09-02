@@ -3,8 +3,8 @@ package com.sensonet.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import com.sensonet.dto.DeviceInfoDTO;
-import com.sensonet.dto.QuotaDTO;
+import com.sensonet.dto.PayloadAnalysisResultDTO;
+import com.sensonet.dto.QuotaWithAlarmRecordDTO;
 import com.sensonet.dto.QuotaInfoDTO;
 import com.sensonet.mapper.entity.QuotaEntity;
 
@@ -23,14 +23,14 @@ public interface QuotaService extends IService<QuotaEntity>{
      * @param payloadMap 报文
      * @return
      */
-    DeviceInfoDTO analysis(String topic,Map<String,Object> payloadMap);
+    PayloadAnalysisResultDTO analysis(String topic, Map<String,Object> payloadMap);
 
 
     /**
      * Save the quota info to influxdb
-     * @param quotaDTOList The quota info list
+     * @param quotaWithAlarmRecordDTOList The quota info list
      */
-    void saveQuotaToInflux(List<QuotaDTO> quotaDTOList);
+    void saveQuotaToInflux(List<QuotaWithAlarmRecordDTO> quotaWithAlarmRecordDTOList);
 
 
     /**

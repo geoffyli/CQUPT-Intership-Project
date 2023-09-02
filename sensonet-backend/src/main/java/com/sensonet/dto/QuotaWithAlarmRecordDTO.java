@@ -8,7 +8,7 @@ import java.io.Serializable;
  * This DTO is used to store the information of a quota.
  */
 @Data
-public class QuotaDTO implements Serializable {
+public class QuotaWithAlarmRecordDTO implements Serializable {
 
     /*
     Copied from QuotaEntity class

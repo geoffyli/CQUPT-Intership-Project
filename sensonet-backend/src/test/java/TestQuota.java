@@ -1,6 +1,6 @@
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sensonet.SensonetApplication;
-import com.sensonet.dto.DeviceInfoDTO;
+import com.sensonet.dto.PayloadAnalysisResultDTO;
 import com.sensonet.service.AlarmService;
 import com.sensonet.service.QuotaService;
 import com.sensonet.util.JsonUtil;
@@ -32,10 +32,10 @@ public class TestQuota {
         Map map = new HashMap<>();
         map.put("sn", "123456");
         map.put("temp", 10);
-        DeviceInfoDTO deviceInfoDTO = quotaService.analysis("temperature", map);
+        PayloadAnalysisResultDTO payloadAnalysisResultDTO = quotaService.analysis("temperature", map);
         String json = null;
         try {
-            json = JsonUtil.serialize(deviceInfoDTO);
+            json = JsonUtil.serialize(payloadAnalysisResultDTO);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -51,10 +51,10 @@ public class TestQuota {
         map.put("sn", "123456");
         map.put("temp", 10);
         // Encapsulate the payload into a DeviceInfoDTO object
-        DeviceInfoDTO deviceInfoDTOUpdated = alarmService.verifyDeviceInfo(quotaService.analysis("temperature", map));
+        PayloadAnalysisResultDTO payloadAnalysisResultDTOUpdated = alarmService.analyzeAlarmInfo(quotaService.analysis("temperature", map));
         String json = null;
         try {
-            json = JsonUtil.serialize(deviceInfoDTOUpdated);
+            json = JsonUtil.serialize(payloadAnalysisResultDTOUpdated);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

@@ -16,7 +16,7 @@ public class AlarmEntity implements Serializable {
     private String name;
     private Integer quotaId;
     private String operator;
-    private Integer threshold;
+    private String threshold;
     private Integer level;
     private Integer cycle;
     @TableField(value = "webhook")
