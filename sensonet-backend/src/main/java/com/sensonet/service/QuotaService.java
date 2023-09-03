@@ -18,10 +18,10 @@ public interface QuotaService extends IService<QuotaEntity>{
 
 
     /**
-     * 指标分析
-     * @param topic 主题
-     * @param payloadMap 报文
-     * @return
+     * Analysis the quota info from the payload
+     * @param topic The MQTT topic
+     * @param payloadMap The payload map from the msg
+     * @return The analysis result
      */
     PayloadAnalysisResultDTO analysis(String topic, Map<String,Object> payloadMap);
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 
 /**
  * This class is used to monitor the MQTT server.
@@ -25,13 +26,13 @@ public class MQTTMonitor {
     private QuotaService quotaService;
 
 
-
     /**
      * This method is used to initialize the monitor.
      * It's called after the bean is constructed.
      */
     @PostConstruct
     public void init() {
+        HashSet<String> topics = new HashSet<>();
         System.out.println("--------- EMQX monitor started to subscribe topics! ----------");
         // Connect to the MQTT server
         emqClient.connect();
@@ -40,15 +41,19 @@ public class MQTTMonitor {
          * Subscribe to the topics
          * For each subject, subscribe to the topic $queue/subject
          */
-        quotaService.getAllSubject().forEach(s -> {
+        for (String subject : quotaService.getAllSubject()) {
             try {
+                if (topics.contains(subject)) {
+                    continue;
+                }
                 // Subscribe to the topic $queue/subject, $queue stands for the shared subscription mode
-                emqClient.subscribe("$queue/"+s);
-                System.out.println("--------- EMQX monitor subscribed to topic: "+s+" ----------");
+                emqClient.subscribe("$queue/" + subject);
+                System.out.println("--------- EMQX monitor subscribed to topic: " + subject + " ----------");
+                topics.add(subject);
             } catch (MqttException e) {
                 e.printStackTrace();
             }
-        });
+        }
     }
 
 }

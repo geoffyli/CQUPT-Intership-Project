@@ -75,7 +75,6 @@ public class QuotaServiceImpl extends ServiceImpl<QuotaMapper, QuotaEntity> impl
         // 2. Encapsulate device information. (Get the device id)
         String snKey = quotaList.get(0).getSnKey(); // Get the filed name of the device id
         if (Strings.isNullOrEmpty(snKey)) return null;
-        System.out.println("id: " + payloadMap.get(snKey));
         String deviceId = payloadMap.get(snKey).toString(); // Get the device id from the payload
         if (Strings.isNullOrEmpty(deviceId)) return null;
         DeviceDTO deviceDTO = new DeviceDTO();

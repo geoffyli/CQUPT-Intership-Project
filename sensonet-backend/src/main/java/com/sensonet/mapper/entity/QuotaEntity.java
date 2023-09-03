@@ -11,35 +11,35 @@ public class QuotaEntity{
     @TableId(value = "id",type = IdType.AUTO)
     private Integer id;
     /**
-     * 指标名称
+     * The name of the quota
      */
     private String name;
     /**
-     * 单位
+     * The unit of the quota
      */
     private String unit;
     /**
-     * 报文主题
+     * The subject of the quota
      */
     private String subject;
     /**
-     * 指标值字段
+     * The value key of the quota in the payload
      */
     private String valueKey;
     /**
-     * 指标值数据类型
+     * the value type of the quota
      */
     private String valueType;
     /**
-     * 设备识别码字段(设备Id)
+     * the device identification key in the payload
      */
     private String snKey;
     /**
-     * web钩子地址
+     * the webhook
      */
     private String webhook;
     /**
-     * 参考值
+     * reference value
      */
     private String referenceValue;
 }
